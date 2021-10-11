@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaccination Management System</title>
+
+<style>
+
+		body {
+			margin:0;
+			padding:0;
+			line-height: 1.5em;
+		}
+		
+		#header {
+			background: black;
+			font-family: Arial; 
+			height: 100px;
+		}
+		
+		#contentwrapper {
+			float: left;
+			width: 100%;
+		}
+		
+		#contentcolumn {
+			margin: 0 230px 0 230px;
+		}
+		
+		.innertext {
+			margin: 20px;
+			font-family: Arial; 
+			color: #5E5E5E;
+		}
+		
+		/* ##### Navigation Bar ##### */
+		
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+		}
+		
+		li {
+			float: left;
+			border-right:1px solid #bbb;
+		}
+		
+		li:last-child {
+			border-right: none;
+		}
+		
+		li a {
+			display: block;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		
+		li a:hover:not(.active) {
+			background-color: 	#808080;
+		}
+		
+		.active {
+			background-color: #0099ff;
+		}	
+		
+		/* ###### Responsive layout CSS ###### */
+		
+		@media (max-width: 840px){ /* Drop Right Column Down */
+		
+		#leftcolumn {
+				margin-left: -100%;
+			}
+			
+		#rightcolumn {
+				float: none;
+				width: 100%;
+				margin-left: 0;
+				clear: both;
+			}
+			
+		#contentcolumn {
+				margin-right: 0; /*Set margin to LeftColumnWidth*/
+			}
+		
+		}
+		
+		@media (max-width: 600px){ /* Drop Left Column Down */
+		
+			#leftcolumn {
+				float: none;
+				width: 100%;
+				clear: both;
+				margin-left: 0;
+			}
+			
+			#contentcolumn {
+				margin-left: 0;
+			}
+		
+		}
+		
+
+</style>
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+	
+		<ul style="display: inline;">
+		  <li><a id="home" href="/home">Home</a></li>
+		  <li class="active"><a id="login" href="loginpage.html">Sign Up & Log In</a></li>
+		  <li><a id="faq" href="#faq">FAQ</a></li>
+		  <li><a id="contact" href="#contact">Contact</a></li>		  
+		</ul>
+	
+	</div>
+	
+	<div id="contentwrapper">
+	
+		<div id="contentcolumn">
+		
+			<div class="innertext">
+			
+				<b>Welcome!</b> <br><br>
+				Please enter you username and password to login to the system:<br><br>
+				<form action="/loginAuth" method="post">
+					<label for="uname">Username: </label>
+					<input type="text" id="uname" name="uname"><br><br>
+					<label for="pswrd">Password: </label>
+					<input type="text" id="pswrd" name="pswrd"><br><br>
+					<input type="submit" value="Login"><br><br>
+				</form>
+				Don't have an account with us yet?&nbsp;&nbsp
+				<a href="#register">Click here to register</a>
+			</div>	
+		</div>
+	</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<script> "text/javascript">
+	$(document).on('click', 'ul li', function(){
+		$(this).addClass('active').siblings().removeClass('active')
+	})
+function goToLoginPage() {
+	document.getElementById("home").classlist.remove('active');
+	document.getElementById("login").classlist.add('active');
+	//obj.class = active;
+}
+</script>
+</body>
+</html>
