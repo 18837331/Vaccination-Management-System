@@ -44,16 +44,16 @@ def redlogin():
 def loginAuth():
     if request.form:
         requestData = request.form
-        username = requestData["uname"]
+        email = requestData["uname"]
         plaintextPasword = requestData["pswrd"]
         hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
 
         with connection.cursor() as cursor:
-            query = "SELECT * FROM person WHERE username = %s AND password = %s"
-            cursor.execute(query, (username, hashedPassword))
+            query = "SELECT * FROM vaccine_taker WHERE eamil = %s AND password = %s"
+            cursor.execute(query, (email, hashedPassword))
         data = cursor.fetchone()
         if data:
-            session["username"] = username
+            session["username"] = email
             return redirect(url_for("home"))
 
         error = "Incorrect username or password."
@@ -61,6 +61,37 @@ def loginAuth():
 
     error = "An unknown error has occurred. Please try again."
     return render_template("loginpage.html", error=error)
+
+
+@app.route("/register", methods=["GET"])
+def register():
+    return render_template("register.html")
+
+@app.route("/registerAuth", methods=["POST"])
+def registerAuth():
+    if request.form:
+        requestData = request.form
+        plaintextPasword = requestData["password"]
+        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+        first_name = requestData["fname"]
+        mid_name=requestData["mname"]
+        last_name = requestData["lname"]
+        birthdate= requestData["birthdate"]
+        email= requestData["email"]
+        phone_num= requestData["phone_num"]
+        try:
+            with connection.cursor() as cursor:
+                query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
+                cursor.execute(query, (first_name,mid_name,last_name,birthdate,email,phone_num,hashedPassword))
+        except pymysql.err.IntegrityError:
+            error = "%s is already taken." % (email)
+            return render_template('register.html', error=error)
+
+        return redirect(url_for("login"))
+
+    error = "An error has occurred. Please try again."
+    return render_template("register.html", error=error)
+
 
 
 
