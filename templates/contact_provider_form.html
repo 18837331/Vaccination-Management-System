@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaccination Management System</title>
+
+<style>
+
+		body {
+			margin:0;
+			padding:0;
+			line-height: 1.5em;
+		}
+		
+		#header {
+			background: black;
+			font-family: Arial; 
+			height: 100px;
+		}
+		
+		#buttonlayout {
+			padding: 30px;
+			font-family: Arial; 
+			height: 200px;
+			width: 100%;
+		}
+		
+		.dropbutton {
+			background-color: #4CAF50; /* Green */
+			border: none;
+			color: white;
+			padding: 15px 16px 15px 16px;
+			text-align: center;
+			text-decoration: none;
+			font-size: 16px;
+		}
+		
+		.dropdown {
+			position: relative;
+			display: inline-block;
+		}
+		
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {background-color: #ddd;}
+
+		.dropdown:hover .dropdown-content {display: block;}
+
+		.dropdown:hover .dropbtn {background-color: #3e8e41;}
+		
+		#contentwrapper {
+			float: left;
+			width: 100%;
+		}
+		
+		#contentcolumn {
+			margin: 0 230px 0 230px;
+		}
+		
+		.innertext {
+			margin: 20px;
+			font-family: Arial; 
+			color: #5E5E5E;
+		}
+		
+		/* ##### Navigation Bar ##### */
+		
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+		}
+		
+		li {
+			float: left;
+			border-right:1px solid #bbb;
+		}
+		
+		li:last-child {
+			border-right: none;
+		}
+		
+		li a {
+			display: block;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		
+		li a:hover:not(.active) {
+			background-color: 	#808080;
+		}
+		
+		.active {
+			background-color: #0099ff;
+		}	
+		
+		/* ###### Responsive layout CSS ###### */
+		
+		@media (max-width: 840px){ /* Drop Right Column Down */
+		
+		#leftcolumn {
+				margin-left: -100%;
+			}
+			
+		#rightcolumn {
+				float: none;
+				width: 100%;
+				margin-left: 0;
+				clear: both;
+			}
+			
+		#contentcolumn {
+				margin-right: 0; /*Set margin to LeftColumnWidth*/
+			}
+		
+		}
+		
+		@media (max-width: 600px){ /* Drop Left Column Down */
+		
+			#leftcolumn {
+				float: none;
+				width: 100%;
+				clear: both;
+				margin-left: 0;
+			}
+			
+			#contentcolumn {
+				margin-left: 0;
+			}
+		
+		}
+		
+
+</style>
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+	
+		<ul style="display: inline;">
+		  <li><a id="home" href="homepage.html">Home</a></li>
+		  <li class="active"><a id="login" href="loginpage.html">{item[0]}/{username}</a></li>
+		  <li><a id="faq" href="#faq">FAQ</a></li>
+		  <li><a id="contact" href="#contact">Contact</a></li>		  
+		</ul>
+	
+	</div>
+	
+	<div id="contentwrapper">
+	
+		<div id="contentcolumn">
+		
+			<div class="innertext">
+			
+				<b style="font-size: x-large;">We're here for you {item[0]}/{username}!</b> <br><br>
+				If you have the slightest doubt or concern regarding the COVID-19 vaccine, and whether taking it
+				is the right choice for you - Please let us know and we'll have our health professionals
+				reach out back to you as soon as possible!<br><br>
+				
+				<div class="dropdown">
+					<button class="dropbutton">Please Choose a Provider to Contact:</button>
+					<div class="dropdown-content">
+						<button>CVS, 432 Fulton St., 11238, Brooklyn, NY</button>
+						<button>Rite-Aid, 555 Washington Ave., 11238, Brooklny, NY</button>
+						<button>Walgreens, 1095 Atlantic Avenue, 11238, Brooklyn, NY</button>
+					</div>
+				</div>
+				<br><br>
+				<form>
+					<label for="msg_to_prvdr">Describe your Concern in as much detail as possible here:</label>
+					<textarea id="msg_to_prvdr" name="msg_to_prvdr" style="height:200px; width: 400px;"></textarea><br>
+					<input type="submit" value="Send Message"><br><br>
+				</form>
+			</div>	
+		</div>
+	</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<script "text/javascript">
+	$(document).on('click', 'ul li', function(){
+		$(this).addClass('active').siblings().removeClass('active')
+	})
+</script>
+</body>
+</html>
