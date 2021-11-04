@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaccination Management System</title>
+<!-- Bootstrap -->
+<link href="bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+
+		body {
+			margin:0;
+			padding:0;
+			line-height: 1.5em;
+		}
+		
+		#header {
+			background: black;
+			font-family: Arial; 
+			height: 100px;
+		}
+		
+		$blue: #74b9ff;
+
+		body {
+		  //background-image: url('https://images.unsplash.com/photo-1560568082-c15188aa6510?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3300&q=80');
+		  background-color: #3498db;
+		  -webkit-font-smoothing: antialiased;
+		  -moz-osx-font-smoothing: grayscale;
+		  text-rendering: optimizeLegibility;
+		}
+
+		.container {
+		  margin: 60px auto;
+		  background: #fff;
+		  padding: 0;
+		  border-radius: 7px;
+		}
+
+		.profile-image {
+		  width: 50px;
+		  height: 50px;
+		  border-radius: 40px;
+		}
+
+		.settings-tray {
+		  background: #eee;
+		  padding: 10px 15px;
+		  border-radius: 7px;
+		  
+		  .no-gutters {
+			padding: 0;
+		  }
+		  
+		  &--right {
+			float: right;
+			
+			i {
+			  margin-top: 10px;
+			  font-size: 25px;
+			  color: grey;
+			  margin-left: 14px;
+			  transition: .3s;
+			  
+			  &:hover {
+				color: $blue;
+				cursor: pointer;
+			  }
+			}
+		  }
+		}
+
+		.search-box {
+		  background: #fafafa;
+		  padding: 10px 13px;
+		  
+		  .input-wrapper {
+			background: #fff;
+			border-radius: 40px;
+			
+			i {
+			  color: grey;
+			  margin-left: 7px; 
+			  vertical-align: middle;
+			}
+		  }
+		}
+
+		input {
+		  border: none;
+		  border-radius: 30px;
+		  width: 80%;
+
+		  &::placeholder {
+			color: #e3e3e3;
+			font-weight: 300;
+			margin-left: 20px;
+		  }
+
+		  &:focus {
+			outline: none;
+		  }
+		}
+
+		.friend-drawer {
+		  padding: 10px 15px;
+		  display: flex;
+		  vertical-align: baseline;
+		  background: #fff;
+		  transition: .3s ease;
+		  
+		  &--grey {
+			background: #eee;
+		  }
+		  
+		  .text {
+			margin-left: 12px;
+			width: 70%;
+			
+			h6 {
+			  margin-top: 6px;
+			  margin-bottom: 0;
+			}
+			
+			p {
+			  margin: 0;
+			}
+		  }
+		  
+		  .time {
+			color: grey;
+		  }
+		  
+		  &--onhover:hover {
+			background: $blue;
+			cursor: pointer;
+			
+			p,
+			h6,
+			.time {
+			  color: #fff !important;
+			}
+		  }
+		}
+
+		hr {
+		  margin: 5px auto;
+		  width: 60%;
+		}
+
+		.chat-bubble {
+		  padding: 10px 14px;
+		  background: #eee;
+		  margin: 10px 30px;
+		  width: auto;
+		  border-radius: 9px;
+		  position: relative;
+		  animation: fadeIn 1s ease-in;
+		  
+		  &:after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			width: 0;
+			height: 0;
+			border: 20px solid transparent;
+			border-bottom: 0;
+			margin-top: -10px;
+		  }
+		  
+		  &--left {
+			 &:after {
+			  left: 0;
+			  border-right-color: #eee;
+				border-left: 0;
+			  margin-left: -20px;
+			}
+		  }
+		  
+		  &--right {
+			&:after {
+			  right: 0;
+			  border-left-color: $blue;
+				border-right: 0;
+			  margin-right: -20px;
+			}
+		  }
+		}
+
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+
+
+		.offset-md-9 {
+		  .chat-bubble {
+			background: $blue;
+			color: #fff;
+		  }
+		}
+
+		.chat-box-tray {
+		  background: #eee;
+		  display: flex;
+		  align-items: baseline;
+		  padding: 10px 15px;
+		  align-items: center;
+		  margin-top: 19px;
+		  bottom: 0;
+		  
+		  input {
+			margin: 0 10px;
+			padding: 6px 2px;
+		  }
+		  
+		  i {
+			color: grey;
+			font-size: 30px;
+			vertical-align: middle;
+			
+			&:last-of-type {
+			  margin-left: 25px;
+			}
+		  }
+		}
+		
+		#contentwrapper {
+			float: left;
+			width: 100%;
+		}
+		
+		#contentcolumn {
+			margin: 0 100px 0 100px;
+		}
+		
+		.innertext {
+			margin: 20px;
+			font-family: Arial; 
+			color: #5E5E5E;
+		}
+		
+		/* ##### Navigation Bar ##### */
+		
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+		}
+		
+		li {
+			float: left;
+			border-right:1px solid #bbb;
+		}
+		
+		li:last-child {
+			border-right: none;
+		}
+		
+		li a {
+			display: block;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		
+		li a:hover:not(.active) {
+			background-color: 	#808080;
+		}
+		
+		.active {
+			background-color: #0099ff;
+		}	
+		
+		/* ###### Responsive layout CSS ###### */
+		
+		@media (max-width: 840px){ /* Drop Right Column Down */
+			
+		#contentcolumn {
+				margin-right: 0; /*Set margin to LeftColumnWidth*/
+			}
+		
+		}
+		
+		@media (max-width: 600px){ /* Drop Left Column Down */
+			
+			#contentcolumn {
+				margin-left: 0;
+			}
+		
+		}
+		
+
+</style>
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+	
+		<ul style="display: inline;">
+		  <li><a id="home" href="homepage.html">Home</a></li>
+		  <li class="active"><a id="login" href="loginpage.html">{item[0]}/{username}</a></li>
+		  <li><a id="faq" href="#faq">FAQ</a></li>
+		  <li><a id="contact" href="#contact">Contact</a></li>		  
+		</ul>
+	
+	</div>
+	
+	<div id="contentwrapper">
+	
+		<div id="contentcolumn">
+		
+			<div class="innertext">
+				<b style="font-size: x-large">Welcome {item[0]}/{username}! <!--Perhapsuse render_template to retrieve username--> </b> <br><br>
+				Click on the rectangle containing the message you would like to respond to:<br><br>
+				
+			</div>
+			<div class="container">
+			<div class="row no-gutters">
+			  <div class="col-md-4 border-right">
+				<div class="settings-tray">
+				  <img class="profile-image" src="https://static.generated.photos/vue-static/face-generator/landing/wall/14.jpg" alt="Profile img">
+				  <span class="settings-tray--right">
+					<i class="material-icons">cached</i>
+					<i class="material-icons">message</i>
+					<i class="material-icons">menu</i>
+				  </span>
+				</div>
+				<div class="search-box">
+				  <div class="input-wrapper">
+					<i class="material-icons">search</i>
+					<input placeholder="Search here" type="text">
+				  </div>
+				</div>
+				<div class="friend-drawer friend-drawer--onhover">
+				  <img class="profile-image" src="https://mymodernmet.com/wp/wp-content/uploads/2019/09/100k-ai-faces-5.jpg" alt="">
+				  <div class="text">
+					<h6>Dr. Patel, Ananda</h6>
+					<p class="text-muted">Dear Mr. Wang,</p>
+				  </div>
+				  <span class="time text-muted small">13:21</span>
+				</div>
+				<hr>
+				<div class="friend-drawer friend-drawer--onhover">
+				  <img class="profile-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUIAAACdCAMAAAD2bIHgAAAAkFBMVEX////MAADLAADKAADPAAD65ubvtrb/+fn//Pz76OjZYmLVPj7cb2/32trUJyf64+PpqKjywMD67OzPICDih4fnkZH99PTSNzfQFBT329vTQkLRCQngeHjaVFTut7f21NTzxsbSLCzomJjpn5/eamrrpqbjgoLWS0vcYGDOFxfgenrTOjrnlJTSMDDaV1fyxcXG4lIdAAAfi0lEQVR4nO09iXbrKowBsjf74mxNnK1Z2qT9/78bAxIIDI7T3jdnzrR67/QmDmYRQhtCVCpBSNLpuXfdfR66zXABC/3N8T4ev7xvR49KFkCruz10zvfrimUwv97Px9sw7Sc/qPF7MOqmg9PnS28uOyLm4/u5s/9K+43na9p+MsEZ51xUO4vCksl0LLKijAv+8vbNfndvnY9qVgvnEoFMNcyFYLvPSf3hDP5D6L91zqusYdkT6Irsh2D39uTruaqSjq6F66EcCopumS4pxy3Esv90txvpdCUEtgfoU59098Vy6FaaViPQizdyDr/BBqRM/7ATZNimI/pT9svxiWXWOAom6Ur/n72+jxYdXoUsokkno/xlrXQrUMGxKvSEQ3tYGz7LOn+fOkgca3KVQ1MrxSA9ulwac06BBd5YvPbkYsJ2kQQNGuQyY+tBrAUPkrVgbl1iEkOAcMplJXvFy94b2vDuV4DIdL4K8U6qnYjAK7JYdLVs7CQ5L7SRxfUvnHQk1CXoyLxehitKGmTIC5imCh6mw+GVtqum6xk6XBwVDdmJpp+csXAxtnw2FZZQOfZQ/nOKNXQTPmpUOwbnh55wWsPhMPsBv/H2Y16V0SBhAUjyQTocCp9jyJK7bjkEJnvKeR5BtpyREG0PnYaZeGmFWxrpF3JdnWts1D5LdyR7UbD6g4EpGnSIQE95gB8SGiQUkY2kFB2O2khLHEmY49QjV4RnwIrGG3j1Jkw5Wj7KDPtVTqibI9GKF/3rjJAgXcMOUyYdijMMjcG1yM+WJgN/mQyduUNRKnG4K8EPtzvaEDes2z70u2GnMV3hYMhCkQQSUarqgnPyBqAHim/HwshNv0KvfwYV70UYPAbZuwKPDjfXeMnHdLhdRd+OA+fATnbhl8U63NglKH84k+u41osIp8J+xOmwsS6qz6HDnCx2St4f0OEmLvVoV/MV39Tr01g3w3p4eLrEMROuo+XzGJQ4jGk3mgaB5rWRAAtMfyd0mNEg8BSqQCKj4eKjUG6lTNiFZRYRrGVXANrVpXuheHmXm5VJmGn2bRtqbYvaHVQB35TFcBL2ZVRLsQeolHB8k6CjGh6f5IOOKuN/snQ4FI72gWwMB5X9dy+Qy+mY1E5wxpFn2x/9TnCWVkBzdXUP/S2oexnp46pM1wwLW0GbwxbJTJo2EK3wTLRD+qHLB8nATBXGTtnMBacT6o1XYTtOh40PungoEpxPrrjHf8VZuh5uHq6xz53AwJK2wjfSD/4vlpVK85MKYof+/Rnym+ObfEseH4y8quhwyHmooDeeGB02333jh+HQiJLizYtFqZhKOp7z0Ph4LzBvfVoW28j0hoFkyepZqDPuJ04/QVP5uTqWUy8zOpQ0WKbkLEyHm1LtxKvlstpZuAsizbc3DBYVLNMa2k/o9rkKfDJsnIkN5BIB5w5ti4s7ITlKsN9nITpMqoXCuPBHBeJYoTLZ6UzIiDqGVZpMHo+cZez+LJVeIQrUDt5xxX8Sbif3Wr6tIhD3AB1GFZLSMM9IbRHuBb/nG5wHi0q15C3WFcHPk0F9Uz+870SsDJqHhgbL4+UZCNBhd174gpz2lRxDQSFpHCTrCA5zfu40XHCcIaAdaYW/9pHCmotjnlVCN6itHOCDWt5ylGT2mWN/MSxHDSfsh2IYOTrsCEabMPVpt+Z9Mhh+fQ3rh0vVsf9sH9SfDE974wzBKliQQ2UFqXZpFLtzRjhLZ8C2OdeUrbN8ETXbF1KopCShnhs6JJYvZkCcXU9vK96U4JfU6CTN5LCMFpXGbToP/+Qzw0aHOp5suYyEurugj9rvsjKxQ03NbZGN4BYjdDZs3QT9HI0Wa5TAm/neSFveNcmnwqvevCDmHgEl755Py0yX+Mx+/oANDg81F28l93vCeReg2lJ2uj/9qgrfidCMkJgwqB59hxHGNM4AUHbYeomqkQH3ziHmnpYuybBY4nOvmm24mBSnw3Dteaketui52GKBL2eiDbNgxoR1iA5tEsIFbUGcbMYs7To9Ggo0BKz7SZe7hhSgkzAcGU1i/U5GsH3zLl0VXAzdKl4F8kDTYfnPQGMGK6VdzruyRpkiDDtkAkF+GthGPEPToIKh+W2MH9sa/WNxHfjksJaLINa6QZ+0FYKu4NFZ2FmyGFQWSoKuaGaZiWyu41ZxpfRh+qWsmA3lAxa/Yplzfo/CYDj3LqbuhRXPwCcgXPeTEc5VsrTsXHHnE2+H3VR1uimEqyNbQuemXuY4wUYV4HzuVNAX+Csn5bhyLG7IM2pN8OOze9crv35jdHMHFQ42OSfWiCnjdhZKEKNrazHCHat1vo10Dlz2uPpxiVQzoZFeueUqWCz7z1GjDsLpG7yhaX5Ieoqzrqs/b5+LXshRnw9BXlr4q/OcoHDi78tg1yPuZvDn5armQq61JQ817nr/Xw3+KFQVb9milu8TiSTzwzNYXFlPH84qDCznzLLk7qCKrkp3qaoXDAqbaEa6Y9dekzAMSVHSDSUMp9QPaFaHIw1qM557N0OQNm8XO27edJEoqfH60tmMSqLxzl0gbJf5Txw9itEvrhihwsLywv6MVkJrjUZaxDRoSWp9rIaIr+wjlQYp7bFtUMuu5jlYt21EsOVtUya04P3Hdn8hcCuR02qkyDo62/3ldRyAudxDidjJVeLwCgc+7GB37BhjQrZngu3O71/JA2rcPqzoR8CnpqVhZLJgUykIrX4QlA1yCPaccoVekI+jcVsv557KqPG8HxZtSrrBAY7gs2vU6LCOam0fh/VCVcauhL1wFp7VJx/FB0Qgk8lUQdfNcbIVOhKkn6accUUk+AoqhQ5rotxLxsddDq2osvNV4GVg5G8hhFVrdwc/5iSePxm7Z+AcrtD8PnB+x26tjBn9HvQz5EamQJok57eAV1zBawyHJVCXL+p8EmsiKV4i7fRKRuHk4Bb26Ztxvod+F6+GmLZhYRUFIcbtbbAnjdf/SqKIGWUhkQgGPvtuhHEt3Ciy1tYy2CBhG5GBF0gHIdbDUFean6jEG1sAv3LyyTVIiNLIndfQ1JI7oY5KUDX6m6ZRBobF8rvBwHI/GZu2dorAXY2Ukfawc3xHlJ5W1e0wMczsQ6uda2uLvYemXDkmTSPG7jHPqIHKmVsQ0GzWrmWf4sMVY+jhowteDvn8TQxWKm9UTCAXNq7yvXGEmv5mv7ZpBRurBGMdHHpp5KoeOTfo4OK6DfQlo0OnJYN+I41pnaZqjtaJkcykG2LmqaWCiBqiuP8AhVImc4JCqBaY4cw0g/azbM1dhxPfqe0LZSJQzR8xD8WQPeCHvhX5gGMogs/Fd8U8qFEL+TEE3cVCq6JJqD0+99za799Si8UtwHyaF2dr1mMA8INd4vpXHrT0dVmfBv8TFO5DIdKwFbrJhZ/Lsb97Y29O8p4M7v6hteMDHjIHkA49TpjvoVub3z58D8UYOn01fYmGBZaBFur5Tq1CGWSn4OzmY2EG1yC5Fn5lYSdx40LinJB5WFHHnL46KCTSFVhujg9qFKJUopzlJ7wQIoFQFiPDVvxupAN2sV9AFvdAPPZiKUhUIHJVR/NwRIye+HHIAfHv9MNw3H+kMP8BCiuDIDOU+zVBp4aKJsnD8MKeHjqEanvQDIfUPg08HOUac9Qsv3HCDSEdh2qUW6GD0FhExJZM0ktxCEWorkB8XIZDhw65929ZaRzYwFEQic7modCb0hD0eMn9wNB+K7/GD0Ymh87qKSzydbCyjB8SXd18IhaL0RqtyCKSWXGiWKT1knPDP7l9m49jxnsZ2AvkUYxZ5TVjhka35fZTYax+pbmof3A4x8DwvZxJgVyR6YjbQDXG54DqPP3LjB4NXWPYcRTiwU1EADCBjHlnlPHgiigJI9oZ1IgzljcUVjBY1T9o31JoDE5LJiwOkC6I4WIQIl4jdZTih/ElXXDqJBqdUHA6sFlrBaBmZ6kRWsl8FXRYl3NotLr7pSLGh0i4xjr9I7kszjEajPvHizZuDyIId8uGwjI5/Qw89vfp49D8mrR7/BFrFLEZATrMCZPcV4ddQqVFJ5/SYIBrtirGcSZPwllpy0QPCspk0dk5bYDK/Yxvt7HYTnYuMeZWXLS+pgpEMYzOfdG3SYA/Qp0FNAj+O8ug7fs2wCcHHWFsSSKAnNi+T3KCw3DFKmHWHGXB+GntqVF//7DiyMNi9MRaBewUK+Iis0AtGZjlXbF60olEM8QXGHhNfTnmMPI9HqIz0wMS3zGpuHd8qzTUBlWBVYPIwgEU7Zs1XzHI1DiQrP/HaAn2O/iACmmwohUQZuWmNZmCxpKEL07atzqLM/2J2xNTzgE1/IfyOAzJBZMnWJmskCqmBW81QltFrPjTIxrUh7F5fng8Pp3H8Eli53BEc+37/MKf+IfD/b/qYQiIiP41EqQZyxag+5XfugkMnT56SIMVFWUUAEk/YS21K2gh217VkT91DJMzRZlTeViN+wzL+qAHZhpBYREVkrPdqKk/gMc0WIlu97BIQEMzcpaDnx0tKCiTAz3clukLv1TyMAiPP+g0pP1/tYwYXwl8gq9laBA3hPx3Fas/BhSbCWwVMEfkZoW988AX/J2b+rj5YlxXPXeW9KkTYv1BDSIwkDfUbRxUFklkDepco1lpzAgW44CzsqYcDaowGJcpm5oyqZyjwzcThIlrE40tTx87oF1rVq9rnKqvPuPqYpYMeANfDshtkK6UQWhb9qFlqvVD2zci82gPpYQ8l8wL8hbZjZd17L4cJPYvMYmmT4MSSFi+UP5VD++NaiwCIXfm/StSUDymm0bZs43laFDWyIoOnhzrBjfpZBctmaMTvf/og4tJ8eKJ2mZoinQ/PBxux7GulBhxxg/DrkGHK5amwUrc1aAgWy739ml/e1/PIRFSnv/KvzluVbdqNdo/zPmkj525EDSuddlevT/SEiupbT+D9pksVsrdTs55e2Oxf4KnFWPQmllLgxGub6xJfSSB59vhiNGA8z7tUZFg3yDv5s/ZpmPOggQilebquTOZTqen9o5HJ70wmZkFxUlJ/43VhFZreT6ooW7TpOG/WB8zlpORf3RZ4vdQbPtFmHpwETOU5vprL+8NMsflrbgyspKZAyZWFntDL0gS5oKMFaG2GKlH08T9yUxnGN/ljDfGwVyNWrOqkOL2ZiIlmBHBROqFbTGVmSHSbqw/9HG7bHpFyQ/juqFYP7vx0Y0nuPFbcJ8hLww1mLjrMF/RahsYWeRE7iOAt8LHjYKQ0aE3OMumn6bBSsFJ6lIQNqqaIQ8rHfUyRDGRU3hhCer/JGI+62D/XlGBZ57mL9bPYxDCxK3VgZ+YQ2yW93LzTbZ4Cfv86ty4uCzPtlI64ud6F6YXODTyXviT4Y1P7fjIPXqiYJiPIhQb8BhkdDeZDCs66AdHxFpmX42w8O6Ok7LIZxnWGMp7kcHoSs5VOnwOxQb92fkUzlQTB7Wvx8g8aHviaT4IkLyY6lCuO6zbmEG5ocXDstE7Zw0x8rLYRXZnvlbcwR8z+Ge2MjIniGDOx8+G5oZiRb5JgxL630qVxXgBBy/ksHGvVDDmoURPvuG+bXZ8ufxtGpSQnAljKN3vVcFuaVL44jb63v7ZXujhf+ecB+GH6v8f0KCEBI9BW0lC5L2vQ4HMKZz5i4BK6Mvwuu+XoHDA3SunJ1aKOD1BifO99NMZHVqB930+aODtKjwkGfUd/yMSWXoki+NG6oaJMZ+RFTvo62Nh3rAuKKKXG4kMz0TvuwdlGuS0nrj/JJW6hu76iSggzt8f2AKZTI69LIoPtnSf4sxcfD6TNdkFyw9/ToMSGoO7tTxDnSWfXh6HLrU5C9fEdw/eTPaPLCZbF98dfpLwHenwX9CggtFhXCZ2RdzLpJOOCteC1OYIi0mZ8MJMO1pNv2NMEFB0mHGlf0GDGkaD5TyMRFS0xfU8LGXPJzyyJ8e2Jd7uT3bFWJTZ5l5uP6cdSYfi4x/RIMAWAqmIeouKbDb89b509OFhEoZDOY/KaPM6RveWkSQadzKnCn+5Df/JnQ3Nzr+kQYCkNTi+7ObcISM23y2Pm9b/5n0dzSSdrmdj4ZIzZ9f78jio/bOeNPY/0gfjUNvW3/aT1+Pl0j6+TvaD+vY/augBNLvDwdtt0lEd6Zxuh8Em/bfL7j+GZkPC/+YlJxFo/F/pyB/8wR/8wR/8wR/8wR/8wR/8wR/8wR/8QQkYTV8VlAtU/IMA1GbaJRmK9/uDUlB70fu87cdF/yAMvx6Ftc1k+vUjh3aGQv6bUTjsnd8Ou4/v78sjFbLfisJhdVjrLhqDyK2CpeCXo3C2r93P93by+a2D4hp+NwpHrNa9VirVNK1+v5LfLU7S3qh7fe3sWt3V9ysBcSJ+JwoX1VZ3vJmPKj+kwl8skZssXawqk9fK4eP7lUgU8l9LhZX9OM0ESWfItt+v45ejMLksN0nyNg9ldc1+7UpYLFQgTrI93WWmlt3r0A1yqenTdBqFzfSwlEmi55d6UE+qpYfjbDyf95adQ+qVqKnmunAFYj/92mylzt/Xj1U8X3Mxfcmqr64HJLxvoZu8T7ahiKF+um/LFnfL10EaC8+pbSdZHYJXd536wuCiCU13c/VCV7sq3HFwmX0ct+GKN3MFY/nz5hMSqQkhXqY0UpLywn6nKvR1YULsprl4yv70g6lru3TA22ziqPSdqmxtpWLK085dlpRBlbOVfFyVR2f7RzgKLsQMHUOt9zmE1Al2yQ2kO7mbiLusxZdJaGJrkxnHLC5CXC063lWP5tWcE+qi+jRfQf9bUfMO7nBcbSuji8CTSjI2U1zJYQFQaiQVDiBDmOqOEF5CwmQiY90gHpzp/p7IBOtTN2KZVBoTuCtNorCnEX6RBxsww4F88JnoPpLMEcILZB296wk1Z6iyaqc+SSVTE0uoQ9GFydGhMveJ/ImfVCasyZ6HrrIOoJCJ+TY52zxBEO9uj35kC1k9a1f2nB5LzRpxcOjcBoLHiATJqqKvqJcoPAFaLArl2dk3kk+Qw2naARPuESlKMKPAZZhCeLec9QP3VIjdVv8I9yf4ce5wdcXDzCDy/IGCa31JMAhIsomNFAolL6w7o1HPxpb5jMw0OMe6xKfB4RGp0KQ6pyg85u7kFFPvGg71cGuRE77SwsVhOOGCgGRwcGurlx2oAUMpSGdqUKiji+d3iBYXgixnjn2Fhcx2d3KKDkOk7UkPTO+Q1VGdr5i5ttkmftQXCPF13YQ6axTq185z6IQ5GsDv9THHjpkDP/ZY4UUnauamRewVObvZ75kTwhBUC990+rAFXOngnsFtAT8r4WSuk4hxPr+c3gaH97M5B4pHkGsk4Szns8vxuB7boHtk3yk+OtYVEfQncD6Er3DMbZ10Z3a1sc0Whfqw2nzd6bTvTjQ55x/tTsd0y950tsEjQR0VG91cnKAmPjNYHr2YytenwXC474zN8OTvOi4/A+fAFSRTNERUiEI855TxrK0m/1G9Crlx8Gwv6IWq1F2pMkk6xeOnZr134LYim5tJEQAnFxa0BcaHK5q4ni8vkrP1INNPVvKSSmronyw3YGKl9JtkuMM1CN1qtoU+sGS5Y3euJ8keqZ3qJcPEDk8TdI9Iu2p1wAkM9xyzvlFAlElnWjcHYOh1ywszcyNEIRJAh1xko+eWg9mz0KTjdCXVd8eYrIVtcsPgzB5LMHdfWVFxs0vdBM334a47PKCTamJ2Dn9umYuQLgTzO2muTnhgT/agqe9HdxKsbecudRSj0DRBOXAKtAkahEGhOBIZD4loMLnoF9MUR0V0A1buJ3w/WrZ0JOobLj+SYaZxNefjrayEi8T4XPdiqBeLoFwMLjA2Kc2gRfFBCzU+IQGrkihwepje7XEAgbB9iEDUC1kuI/5e6xxwoRNYJ979F8lOr7V5CuPTzNqp56QF23JkBgRr0UnH0wOpSK+2RZlNU8Q0rtAPjf6b1OCFcK5Xhbu6MTdPOta1rFydJRWkF13dJyI6GmCNzQowZ6AO5x79k9CLHVC3Qg9KZC/jzQnmUk9f/byW4GTngbN8HC/lgfRqfrrynl4Kjtb8BfcZ0Ky7TWAEIE8OqsWzw8SST81n4YqkN6jF9zdX9XwrB2By0SzV5jHqa5ZdLsFPHc6PVn2+2dHCQh9OR5erZ4scQIeAFdBU4JT4WunlOIPeYUYm7+A1LGQnGR7Id8MDFEwcFIZa3ACj0LcJNDCdiNteNu6TOi2lMfumhZLVvXQzvFrqEB6o1vlsHAOdUUMLAjTwvPPSA52DKHr+uvY2h4WHKGzrhSyWbsEemCr0WRpSeXF1x06a9Q9MW09CozCpcn2sODZ+BSMG1hHOhrYzShh3EkAvzJNsC+Zb6U6RvRPMJpZDYXPUWgzfl1eTuIOgMCTpesA16LNUE77LYTCReg6FjazFzevLleNpOo3CBYzigYYMMgf0D3MXcEFyAwKoWucTEMDg1bAieydhFHbrt87LXFkTRlexC1mj0EMBoNDZmkhhcQdQ6OeDTQfTzseK2C8GhSDCH2RixWTwSEh73Z1rub137WZgq/xaXIGxLD9HHP8DuJvOvtzsnz7mDK8tYKgxWSqESj2nXk/zcx+Fag16KNQ1WxQ2Fq+zuc3TD1TIAYU3ULQfpKiQN9XLarUYTz60Nyd850wONAp54Lq3HQhh+Tm2kCHNhEFhemT0Iivp4OS5hczzwktLZB+FCtt5KnR44fbCBcnNkOFypT9pFJ70JBfkdNcAvoarqnehJ/ThSwCwkK95/gxmaiEK3YXcnK7IaXUu2P0zMwNDvDCPwqcWsuGFzXfmtXhJJ5ws5FOYceSgv9I17O1L3M/FGQONwigVPoPCxsnecyBEdXmTxvTtv0Rh0nFaPN82NXQQAAqh/ONLE87g/8jeanzo3pQx7iQAFQZ5of5Jfi6FQrwGmovxcrpNtP7jo5D/SxTiN85751sKF2w7KAQbNH5DPQLciS0dr1+aIldlj+g/I5GLUThSJeT/E9L4T6gw70NwUdjHm5fmU2LBOChEzDwMhhnNjI9kD+v40SsI2lPD83phHzImqZoi0QwDTsTJVHNutJgBblp+UNU6YAvp/Kx5KgxIZGZV65MWXfzq7DdNBREnNf2lxOVxwLSXzQT8XKWDoiFBL/HNAxz0JR7aEFco9K96VfsL1jr5hN669HxTwxQWhQoDORQqNUi4KNSGTRyFOrEf97NYKyo01gl4GXI31fT3Cm5Gu0qVZpIRwAi6WDrDChh4nPlvgE9FZxWPbMXDtoZCYQuw/OKqfCeNHGIjR1HIAygM6YWIwu5Om4WfDnr05cWIQnNFmM+oBpDQwvYWjLrBAIy70okGAIU5bpFeNQbnyklUhEJYyDIxo0Th0SHn0dm3kRXhBPRC5ZFyegA2cpQK07nuubtv1NrphIlwaWGdw/rxVhlulBFM6PVyhF/K54tDKuSeZtiBAehUuk40gwVKhd0d7MI5fd1ANd+lwjwKLRVqFPpbb7h5CSgczeC7m0u0BU/JNa8tvc+nHSN8Vz6wuo5GmOPuRNuSwTYq2Yp3uqtZsELhAjb3nKvxkit4nh2JHKTCgIHH847MCWQTVSgca6vkQhdybaWtI3N15g22bVc0qqLRhm3euls3wz3gssadBHD8S8Fxto0MVmDjMt2RqJuBG6UmOcPFsYS5t9ra82T9prAPkKdCVS6n1IQWshplWtFLQ6lCZP3ITXetKWKep1EPcLojxWC31r1f0yQd5iyWEDYIdV2XEr5somKEkq+OgI12dCPHqJDwwkoH5I9VMbZ3c0cO2oA6miGgF2pKoc9S8BwHFjK4GY7IJZDwm8OxucvDJGbfMAwKmKRKRIw2GHPh+dxmwNOy0i9P5EvCHTy9jzN/WV8+l8ZPADsnD5xdgJ8v8EPx3XtmKCTdw3lFvF33qQp0OUbdDPx51Rrzx4n7pJskSbq3O81ZZR+3m8aDyU0rrud2pwPjU2h2ZcwejR1WIgGdg0K1ilfwtp5DrAr3bEoZeGfsgQrs0lc5X5fMPJRoO/5TA2/H8y32zqZF8KDSe93NvQzyi+9baZn7D+dPrGNj4E3Pph2LQcNsS6EwHXO/BrFPzbP/AIVfK7/FzBomedShlaQdSrWn7rR1wNzvyb19iVIo5PXRi4dDQa55KOfs2s7dKji7SaOFovAfO7uG3o3bKhGxzTVqWrnl79cU97z3ZoO/PZUCFyXyoNK6cLisg6lV8El2XuVJUJ6/+WGgIjGFmc50zc2Nk9kn5UHrw+3sXKFQXn8j95o9r/VVV+/unUC4qIPCkw5ENC7X7RKkh2ZBO7RatHi0E5UuLYdS1j67BBS/Buz85i+qKYI68D/pDdq0zdUfrOOooqNTR4HHZb+O+rHlHJv3HdRxbUNG0eS2nsv9U6W+7eENT+C966fOZZd9XfTomAkDeN8qI/XXMQRs9SAaqjKaSknGxk4r2/e7zVP4cgpmzU122t4pb9ypHgDRKIdasqi/rpfLz9Ow79lDzWCCOnhKyzZri+Hb4bBJSRrFpL9YLHSNgTckNELVhx4GW+xu3vaHYVqzT0eyxZrXSis9dLLRrTuDWJJCw9XCP0cA95HL7ff9/4YmWLVPZgDWSg0vuj3710BrrhTZZ4w7Cehm+EOhuabwGeNOAuwj/6Ew4713bYx+PJkMFw5N/KGwMjrqbf7nlMKKJ5F/KRwmg00dzLNM+3r26PsfFUqTCe80zG00lAFUhX4zCunVzGVjkQigm+EPhQDP328CYUm/G4UcDyIF9tMfA8SY/2rrBG80y2zn52/KqlS6UwWTJ9XJ/1cwOI9XjK16x81DPvg/w1e2K4NEp4AAAAAASUVORK5CYII=" alt="">
+				  <div class="text">
+					<h6>CVS, 432 Fulton St., 11238 BK</h6>
+					<p class="text-muted">Appointment Confirmed:</p>
+				  </div>
+				  <span class="time text-muted small">00:32</span>
+				</div>
+			  </div>
+			  <div class="col-md-8">
+				<div class="settings-tray">
+					<div class="friend-drawer no-gutters friend-drawer--grey">
+					<img class="profile-image" src="https://mymodernmet.com/wp/wp-content/uploads/2019/09/100k-ai-faces-5.jpg" alt="">
+					<div class="text">
+					  <h6>Dr. Patel, Ananda</h6>
+					  <p class="text-muted">Feel free to voice your concerns to me</p>
+					</div>
+					<span class="settings-tray--right">
+					  <i class="material-icons">cached</i>
+					  <i class="material-icons">message</i>
+					  <i class="material-icons">menu</i>
+					</span>
+				  </div>
+				</div>
+				<div class="chat-panel">
+				  <div class="row no-gutters">
+					<div class="col-md-3">
+					  <div class="chat-bubble chat-bubble--left">
+						Dear Mr. Wang,
+						
+						There is no evidence to suggest that your situation should prevent you from receiving the vaccine,<br>
+						I have multiple patients who have done so safely,<br><br>
+						Please let me know if you any further questions!
+					  </div>
+					</div>
+				  </div>
+				  <div class="row no-gutters">
+					<div class="col-md-3 offset-md-9">
+					  <div class="chat-bubble chat-bubble--right">
+						Thank you so much Dr. Ananda!
+					  </div>
+					</div>
+				  </div>
+				  <div class="row no-gutters">
+					<div class="col-md-3 offset-md-9">
+					  <div class="chat-bubble chat-bubble--left">
+						You're very welcome.
+					  </div>
+					</div>
+				  </div>
+				  <div class="row">
+					<div class="col-12">
+					  <div class="chat-box-tray">
+						<i class="material-icons">sentiment_very_satisfied</i>
+						<input type="text" placeholder="Type your message here...">
+						<i class="material-icons">send</i>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<script "text/javascript">
+	$(document).on('click', 'ul li', function(){
+		$(this).addClass('active').siblings().removeClass('active')
+	})
+	
+	$( '.friend-drawer--onhover' ).on( 'click',  function() {
+		$( '.chat-bubble' ).hide('slow').show('slow');
+	});
+</script>
+</body>
+</html>
