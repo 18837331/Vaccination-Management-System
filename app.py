@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, s
 import os
 import uuid
 import hashlib
-import pymysql
+import psycopg2
 from functools import wraps
 import time
 
@@ -10,14 +10,11 @@ app = Flask(__name__)
 app.secret_key = "super secret key"
 IMAGES_DIR = os.path.join(os.getcwd(), "images")
 
-connection = pymysql.connect(host="localhost",
-                             user="root",
-                             password="root",
-                             db="vacc",
-                             charset="utf8mb4",
-                             port=3306,
-                             cursorclass=pymysql.cursors.DictCursor,
-                             autocommit=True)
+connection = psycopg2.connect(host="localhost",
+                             user="postgres",
+                             password="1116",
+                             database="test")
+connection.autocommit = True
 
 
 @app.route("/")
@@ -34,7 +31,7 @@ def redlogin():
 
 
 @app.route("/registerpage")
-def redlogin():
+def redregister():
     return render_template("registerpage.html")
 
 
@@ -47,10 +44,9 @@ def loginAuth():
         email = requestData["uname"]
         plaintextPasword = requestData["pswrd"]
         hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
-
-        with connection.cursor() as cursor:
-            query = "SELECT * FROM vaccine_taker WHERE eamil = %s AND password = %s"
-            cursor.execute(query, (email, hashedPassword))
+        cursor = connection.cursor()
+        query = "SELECT * FROM vaccine_taker WHERE email = %s AND password = %s"
+        cursor.execute(query, (email, hashedPassword))
         data = cursor.fetchone()
         if data:
             session["username"] = email
@@ -76,18 +72,18 @@ def registerAuth():
         first_name = requestData["fname"]
         mid_name=requestData["mname"]
         last_name = requestData["lname"]
-        birthdate= requestData["birthdate"]
+        bd = requestData["birthday"].replace('-','')
         email= requestData["email"]
         phone_num= requestData["phone_num"]
         try:
             with connection.cursor() as cursor:
                 query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
-                cursor.execute(query, (first_name,mid_name,last_name,birthdate,email,phone_num,hashedPassword))
-        except pymysql.err.IntegrityError:
+                cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+        except psycopg2.IntegrityError:
             error = "%s is already taken." % (email)
             return render_template('register.html', error=error)
 
-        return redirect(url_for("login"))
+        return redirect("/loginpage")
 
     error = "An error has occurred. Please try again."
     return render_template("register.html", error=error)

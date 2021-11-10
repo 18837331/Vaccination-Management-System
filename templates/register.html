@@ -115,8 +115,8 @@
 	<div id="header">
 	
 		<ul style="display: inline;">
-		  <li><a id="home" href="homepage.html">Home</a></li>
-		  <li class="active"><a id="login" href="loginpage.html">Sign Up & Log In</a></li>
+		  <li><a id="home" href="/home">Home</a></li>
+		  <li class="active"><a id="login" href="/loginpage">Sign Up & Log In</a></li>
 		  <li><a id="faq" href="#faq">FAQ</a></li>
 		  <li><a id="contact" href="#contact">Contact</a></li>		  
 		</ul>
@@ -131,7 +131,7 @@
 			
 				<b style="font-size: x-large;">We're glad to see you joining us!</b> <br><br>
 				Please enter the following information to create an account with us and get your vaccination scheduled today!<br><br>
-				<form>
+				<form action="/registerAuth" method="post">
 					<label for="fname">First Name: </label>
 					<input type="text" id="fname" name="fname"><br><br>
 					<label for="mname">Middle Name (optional): </label>
@@ -139,22 +139,22 @@
 					<label for="lname">Last Name: </label>
 					<input type="text" id="lname" name="lname"><br><br>
 					<label for="dob">Date of Birth: </label>
-					<input type="date" id="dob" name="dob"><br><br>
+					<input type="date" id="dob" name="birthday"><br><br>
 					<label for="pswrd">Password: </label>
-					<input type="text" id="pswrd" name="pswrd"><br><br>
+					<input type="text" id="pswrd" name="password"><br><br>
 					<label for="email">Email: </label>
 					<input type="text" id="email" name="email"><br><br>
 					<label for="phone">Phone Number: </label>
-					<input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
+					<input type="tel" id="phone" name="phone_num" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
 					placeholder="123-456-7890"><br><br>
 					<label for="zipcode">Zip code: </label>
 					<input type="text" id="zipcode" name="zipcode" pattern="[0-9]*"><br><br>
 					I am a:<br>&nbsp;
-					<input type="radio" id="patient" name="fav_language" value="patient">
+					<input type="radio" id="patient" name="usertype" value="patient">
 					<label for="patient">&nbsp;&nbsp;Patient (interested in vaccination)</label><br>
-  					<input type="radio" id="healthprovider" name="fav_language" value="healthprovider">
+  					<input type="radio" id="healthprovider" name="usertype" value="healthprovider">
   					<label for="healthprovider">Healthcare Provider</label><br>
-  					<input type="radio" id="physician" name="fav_language" value="physician">
+  					<input type="radio" id="physician" name="usertype" value="physician">
   					<label for="physician">Physician</label><br>
 					<input type="submit" value="Creat Account"><br><br>
 				</form>
