@@ -75,10 +75,16 @@ def registerAuth():
         bd = requestData["birthday"].replace('-','')
         email= requestData["email"]
         phone_num= requestData["phone_num"]
+        usertype = requestData["usertype"]
         try:
             with connection.cursor() as cursor:
-                query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
-                cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+                if usertype == "patient":
+                    query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
+                    cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+                elif usertype == "physician":
+                    query = "INSERT INTO doctor (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
+                    cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+                    
         except psycopg2.IntegrityError:
             error = "%s is already taken." % (email)
             return render_template('register.html', error=error)
