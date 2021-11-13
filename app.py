@@ -44,8 +44,15 @@ def loginAuth():
         email = requestData["uname"]
         plaintextPasword = requestData["pswrd"]
         hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+        usertype = requestData["usertype"]
         cursor = connection.cursor()
-        query = "SELECT * FROM vaccine_taker WHERE email = %s AND password = %s"
+        query = ""
+        if usertype == "patient":
+            query = "SELECT * FROM vaccine_taker WHERE email = %s AND password = %s"
+        elif usertype == "doctor":
+            query = "SELECT * FROM doctor WHERE email = %s AND password = %s"
+        elif usertype == "healthprovider":
+            query = "SELECT * FROM medical_provider WHERE email = %s AND password = %s"
         cursor.execute(query, (email, hashedPassword))
         data = cursor.fetchone()
         if data:
