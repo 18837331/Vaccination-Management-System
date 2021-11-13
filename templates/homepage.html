@@ -143,9 +143,15 @@
 	
 		<ul style="display: inline;">
 		  <li class="active"><a id="home" href="/home">Home</a></li>
+		  {% if username is not defined %}
 		  <li><a id="login" href="/loginpage">Sign Up & Log In</a></li>
+		  {% endif %}
 		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		  
+		  <li><a id="contact" href="#contact">Contact</a></li>	
+		  {% if username is defined %}	
+		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
+		  <li><a id="logout" href="/logout">Logout</a></li>
+		  {% endif %}
 		</ul>
 	
 	</div>

@@ -19,7 +19,10 @@ connection.autocommit = True
 
 @app.route("/")
 def index():
-    return render_template("homepage.html")
+    try:
+        return render_template("homepage.html",username=session["username"])
+    except:
+        return render_template("homepage.html")
 
 @app.route("/home")
 def home():
@@ -29,13 +32,9 @@ def home():
 def redlogin():
     return render_template("loginpage.html")
 
-
-@app.route("/registerpage")
-def redregister():
-    return render_template("registerpage.html")
-
-
-
+@app.route("/medicalregisterpage")
+def medicalredregister():
+    return render_template("register_medical_provider.html")
 
 @app.route("/loginAuth", methods=["POST"])
 def loginAuth():
@@ -47,16 +46,21 @@ def loginAuth():
         usertype = requestData["usertype"]
         cursor = connection.cursor()
         query = ""
-        if usertype == "patient":
-            query = "SELECT * FROM vaccine_taker WHERE email = %s AND password = %s"
+        if usertype == "vaccine_taker":
+            query = "SELECT id, first_name, last_name FROM vaccine_taker WHERE email = %s AND password = %s"
         elif usertype == "doctor":
-            query = "SELECT * FROM doctor WHERE email = %s AND password = %s"
-        elif usertype == "healthprovider":
-            query = "SELECT * FROM medical_provider WHERE email = %s AND password = %s"
+            query = "SELECT id, first_name, last_name FROM doctor WHERE email = %s AND password = %s"
+        elif usertype == "medical_provider":
+            query = "SELECT id, name FROM medical_provider WHERE email = %s AND password = %s"
         cursor.execute(query, (email, hashedPassword))
         data = cursor.fetchone()
         if data:
-            session["username"] = email
+            session["usertype"] = usertype
+            session["id"] = data[0]
+            if usertype == "medical_provider":
+                session["username"] = data[1]
+            else:
+                session["username"] = data[1]+" "+data[2]
             return redirect(url_for("home"))
 
         error = "Incorrect username or password."
@@ -74,35 +78,61 @@ def register():
 def registerAuth():
     if request.form:
         requestData = request.form
-        plaintextPasword = requestData["password"]
-        hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
-        first_name = requestData["fname"]
-        mid_name=requestData["mname"]
-        last_name = requestData["lname"]
-        bd = requestData["birthday"].replace('-','')
-        email= requestData["email"]
-        phone_num= requestData["phone_num"]
         usertype = requestData["usertype"]
-        try:
-            with connection.cursor() as cursor:
-                if usertype == "patient":
-                    query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
-                    cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
-                elif usertype == "physician":
-                    query = "INSERT INTO doctor (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
-                    cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
-                    
-        except psycopg2.IntegrityError:
-            error = "%s is already taken." % (email)
-            return render_template('register.html', error=error)
-
+        print("Received", usertype)
+        if usertype == "patient" or usertype == "doctor":
+            plaintextPasword = requestData["password"]
+            hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+            first_name = requestData["fname"]
+            mid_name=requestData["mname"]
+            last_name = requestData["lname"]
+            bd = requestData["birthday"].replace('-','')
+            email= requestData["email"]
+            phone_num= requestData["phone_num"]
+            try:
+                with connection.cursor() as cursor:
+                    if usertype == "patient":
+                        query = "INSERT INTO vaccine_taker (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
+                        cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+                    elif usertype == "doctor":
+                        query = "INSERT INTO doctor (first_name,mid_name,last_name,birthdate,email,phone_num,Password) VALUES (%s, %s, %s, %s,%s, %s, %s)"
+                        cursor.execute(query, (first_name,mid_name,last_name,bd,email,phone_num,hashedPassword))
+                        
+            except psycopg2.IntegrityError:
+                error = "%s is already taken." % (email)
+                return render_template('register.html', error=error)
+        elif usertype == "medical_provider":
+            print("Type correct")
+            name = requestData["name"]
+            address1 = requestData["address1"]
+            address2 = requestData["address2"]
+            city = requestData["city"]
+            state = requestData["state"]
+            country = requestData["country"]
+            zipcode = requestData["zipcode"]
+            email = requestData["email"]
+            phone_num = requestData["phone_num"]
+            plaintextPasword = requestData["password"]
+            hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
+            try:
+                with connection.cursor() as cursor:
+                    print("Before query")
+                    query = "INSERT INTO medical_provider (name, password, address1, address2, city, state, country, zipcode, email, phone_num) VALUES (%s, %s, %s, %s,%s, %s, %s, %s, %s, %s)"
+                    cursor.execute(query, (name, hashedPassword, address1, address2, city, state, country, zipcode, email, phone_num))
+                    print("Query Success")
+            except psycopg2.IntegrityError:
+                print("Exception")
+                error = "%s is already taken." % (email)
+                return render_template('register.html', error=error)
         return redirect("/loginpage")
 
     error = "An error has occurred. Please try again."
     return render_template("register.html", error=error)
 
-
-
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run()
