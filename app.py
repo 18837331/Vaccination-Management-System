@@ -79,7 +79,6 @@ def registerAuth():
     if request.form:
         requestData = request.form
         usertype = requestData["usertype"]
-        print("Received", usertype)
         if usertype == "patient" or usertype == "doctor":
             plaintextPasword = requestData["password"]
             hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
@@ -102,7 +101,6 @@ def registerAuth():
                 error = "%s is already taken." % (email)
                 return render_template('register.html', error=error)
         elif usertype == "medical_provider":
-            print("Type correct")
             name = requestData["name"]
             address1 = requestData["address1"]
             address2 = requestData["address2"]
@@ -133,6 +131,75 @@ def registerAuth():
 def logout():
     session.clear()
     return redirect("/")
+
+@app.route("/application")
+def application():
+    try:
+        usertype = session["usertype"]
+    except:
+        return redirect("/")
+    if usertype == "patient":
+        return redirect("/vaccinetakerhome")
+    elif usertype == "doctor":
+        return redirect("/doctorhome")
+    elif usertype == "medical_provider":
+        return redirect("/providerhome")
+
+@app.route("/providerhome")
+def provider_home():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        username = session["username"]
+    except:
+        return redirect("/")
+    return render_template("provider.html", username=username)
+
+@app.route("/manage_provider_profile")
+def manage_provider_profile():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    cursor = connection.cursor()
+    query = "SELECT address1, address2, city, state, country, zipcode, phone_num from medical_provider where id=%s;"
+    cursor.execute(query, (id,))
+    data = cursor.fetchone()
+    cursor.close()
+    if data:
+        return render_template("manage_provider_profile.html", username=username, data=data)
+
+@app.route("/update_provider_profile", methods=["POST"])
+def update_provider_profile():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.form:
+        requestData = request.form
+        name = requestData["name"]
+        address1 = requestData["address1"]
+        address2 = requestData["address2"]
+        city = requestData["city"]
+        state = requestData["state"]
+        country = requestData["country"]
+        zipcode = requestData["zipcode"]
+        phone_num = requestData["phone_num"]
+    else:
+        return redirect("/")
+    with connection.cursor() as cursor:
+        query = "UPDATE medical_provider SET name=%s, address1=%s, address2=%s, city=%s, state=%s, country=%s, zipcode=%s, phone_num=%s where id=%s;"
+        cursor.execute(query, (name, address1, address2, city, state, country, zipcode, phone_num, id))
+    session["username"] = name
+    return redirect("/application")
 
 if __name__ == "__main__":
     app.run()

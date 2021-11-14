@@ -138,10 +138,13 @@
 	<div id="header">
 	
 		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
-		  <li class="active"><a id="login" href="/loginpage">{item[0]}/{username}</a></li>
-		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		  
+			<li><a id="home" href="/home">Home</a></li>
+			<li><a id="faq" href="#faq">FAQ</a></li>
+			<li><a id="contact" href="#contact">Contact</a></li>		
+			{% if username is defined %}	
+			<li><p style="color:white;"> Welcome, {{username}}</p></li>  
+			<li><a id="logout" href="/logout">Logout</a></li>
+			{% endif %}    
 		</ul>
 	
 	</div>
@@ -151,19 +154,27 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-			
-				<b>Welcome {item[0]}/{username}! <!--Perhapsuse render_template to retrieve username--> </b> <br><br>
-				
+				<form action="/update_provider_profile" method="post">
+					<label for="name">Name: </label>
+					<input type="text" id="name" name="name" required="required" value="{{username}}"><br><br>
+					<label for="address1">Address Line1: </label>
+					<input type="text" id="address1" name="address1" required="required" value="{{data[0]}}"><br><br>
+					<label for="address2">Address Line2(optional): </label>
+					<input type="text" id="address2" name="address2" required="required" value="{{data[1]}}"><br><br>
+					<label for="city">City: </label>
+					<input type="text" id="city" name="city" required="required" value="{{data[2]}}"><br><br>
+					<label for="state">State: </label>
+					<input type="text" id="state" name="state" required="required" pattern="[A-Z]{2}" value="{{data[3]}}"><br><br>
+					<label for="country">Country: </label>
+					<input type="text" id="country" name="country" required="required" value="{{data[4]}}"><br><br>
+					<label for="zipcode">Zip code: </label>
+					<input type="text" id="zipcode" name="zipcode" pattern="[0-9]{5}" value="{{data[5]}}"><br><br>
+					<label for="phone">Phone Number: </label>
+					<input type="tel" id="phone" name="phone_num" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="{{data[6]}}"><br><br>
+					<input type="submit" value="Update"><br><br>
+				</form>
 			</div>
-			Name: 
-            Password: 
-            Address1: 
-            Address2: 
-            City: 
-            State: 
-            Country: 
-            Email: 
-            Phone_num: 
+			
 		</div>
 	</div>
 
