@@ -201,5 +201,121 @@ def update_provider_profile():
     session["username"] = name
     return redirect("/application")
 
+@app.route("/manage_availability")
+def manage_availability():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    cursor = connection.cursor()
+    query = "select v.vaccine_name, description, version, available_num, in_progress_num, used_num, wasted_num, a.vaccination_id from availability a join vaccination v on a.vaccination_id = v.id where a.medical_provider_id=%s;"
+    cursor.execute(query, (id,))
+    data = cursor.fetchall()
+    cursor.close()
+    if data:
+        return render_template("manage_availability.html", username=username, data=data)
+    return redirect("/")
+
+@app.route("/update_availability", methods=["POST"])
+def update_availability():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.form:
+        requestData = request.form
+    else:
+        return redirect("/")
+    with connection.cursor() as cursor:
+        for key in requestData.keys():
+            vaccine_id = int(key.split("_")[-1])
+            new_availability = requestData[key]
+            query = "UPDATE availability SET available_num = %s where medical_provider_id=%s and vaccination_id=%s;"
+            cursor.execute(query, (new_availability, id, vaccine_id))
+    return redirect("/application")
+
+@app.route("/add_new_availability_page")
+def add_new_availability_page():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    cursor = connection.cursor()
+    query = """select vaccine_name, description, version, fda_approved, who_listing, clinical_trial, v.id from vaccination v left join
+    (select vaccination_id from availability where medical_provider_id = %s) exist
+    on v.id = exist.vaccination_id
+    where exist.vaccination_id is NULL;"""
+    cursor.execute(query, (id,))
+    data = cursor.fetchall()
+    cursor.close()
+    if data:
+        return render_template("add_new_availability_page.html", username=username, data=data)
+    return render_template("add_new_availability_page.html", username=username)
+
+@app.route("/add_new_availability", methods=["POST"])
+def add_new_availability():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.form:
+        requestData = request.form
+    else:
+        return redirect("/")
+    with connection.cursor() as cursor:
+        for key in requestData.keys():
+            vaccine_id = int(key.split("_")[-1])
+            new_availability = requestData[key]
+            if new_availability != "":
+                query = "insert into availability (medical_provider_id, vaccination_id, available_num) values(%s, %s, %s)"
+                cursor.execute(query, (id, vaccine_id, new_availability))
+    return redirect("/application")
+
+@app.route("/create_vaccination", methods=["POST","GET"])
+def create_vaccination():
+    try:
+        usertype = session["usertype"]
+        if usertype != "medical_provider":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "POST":
+        if request.form:
+            requestData = request.form
+        else:
+            return redirect("/")
+        vaccine_name = requestData["vaccine_name"]
+        description = requestData["description"]
+        version = requestData["version"]
+        fda_approved = requestData["fda_approved"]
+        who_listing = requestData["who_listing"]
+        clinical_trial = requestData["clinical_trial"]
+        available_num = requestData["available_num"]
+        with connection.cursor() as cursor:
+            query = "insert into vaccination (vaccine_name, description, version, fda_approved, who_listing, clinical_trial) values (%s, %s, %s, %s, %s, %s) returning id;"
+            cursor.execute(query, (vaccine_name, description, version, fda_approved, who_listing, clinical_trial))
+            vaccination_id = cursor.fetchone()[0]
+            query = "insert into availability values (%s, %s, %s, 0, 0, 0)"
+            cursor.execute(query, (id, vaccination_id, available_num))
+        return redirect("/application")
+    else:
+        return render_template("create_vaccination.html", username=username)
+
 if __name__ == "__main__":
     app.run()
