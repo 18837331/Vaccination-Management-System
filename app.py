@@ -216,9 +216,7 @@ def manage_availability():
     cursor.execute(query, (id,))
     data = cursor.fetchall()
     cursor.close()
-    if data:
-        return render_template("manage_availability.html", username=username, data=data)
-    return redirect("/")
+    return render_template("manage_availability.html", username=username, data=data)
 
 @app.route("/update_availability", methods=["POST"])
 def update_availability():
@@ -260,6 +258,7 @@ def add_new_availability_page():
     data = cursor.fetchall()
     cursor.close()
     if data:
+        print(data)
         return render_template("add_new_availability_page.html", username=username, data=data)
     return render_template("add_new_availability_page.html", username=username)
 
