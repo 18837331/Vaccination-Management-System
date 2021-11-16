@@ -154,7 +154,7 @@ def provider_home():
         username = session["username"]
     except:
         return redirect("/")
-    return render_template("provider.html", username=username)
+    return render_template("providerhome.html", username=username)
 
 @app.route("/manage_provider_profile")
 def manage_provider_profile():
@@ -316,5 +316,82 @@ def create_vaccination():
     else:
         return render_template("create_vaccination.html", username=username)
 
+@app.route("/doctorhome")
+def doctorhome():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        username = session["username"]
+    except:
+        return redirect("/")
+    return render_template("doctorhome.html", username=username)
+
+@app.route("/manage_doctor_profile", methods=["POST","GET"])
+def manage_doctor_profile():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        cursor = connection.cursor()
+        query = "SELECT first_name, mid_name, last_name, birthdate, phone_num FROM doctor where id=%s;"
+        cursor.execute(query, (id,))
+        data = cursor.fetchone()
+        if data:
+            formated_birthdate = data[3][:4] + "-" + data[3][4:6] + "-" + data[3][6:]
+            data = (data[0], data[1], data[2], formated_birthdate, data[4])
+        mp_query = """select m.name, m.address1, m.address2, m.city, m.state, m.country, m.zipcode from 
+        doctor d join medical_provider m on d.medical_provider_id = m.id 
+        where d.id=%s;"""
+        cursor.execute(mp_query, (id,))
+        mp_data = cursor.fetchone()
+        cursor.close()
+        return render_template("manage_doctor_profile.html", username=username, data=data, mp_data=mp_data)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            first_name = requestData["fname"]
+            mid_name = requestData["mname"]
+            last_name = requestData["lname"]
+            bd = requestData["birthday"].replace('-','')
+            phone_num = requestData["phone_num"]
+            with connection.cursor() as cursor:
+                query = "UPDATE doctor SET first_name=%s, mid_name=%s, last_name=%s, birthdate=%s, phone_num=%s WHERE id=%s;"
+                cursor.execute(query, (first_name, mid_name, last_name, bd, phone_num, id))
+            session["username"] = first_name + " " + last_name
+        return redirect("/application")
+
+@app.route("/manage_doctor_provider", methods=["GET","POST"])
+def manage_doctor_provider():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        cursor = connection.cursor()
+        mp_query = "SELECT name, address1, address2, city, state, country, zipcode, id FROM medical_provider;"
+        cursor.execute(mp_query)
+        medical_provider_data = cursor.fetchall()
+        cursor.close()
+        return render_template("manage_doctor_provider.html", username=username, medical_provider_data=medical_provider_data)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            for key in requestData.keys():
+                if requestData[key]=="Select":
+                    with connection.cursor() as cursor:
+                        query = "UPDATE doctor SET medical_provider_id=%s WHERE id=%s;"
+                        cursor.execute(query, (key, id))
+                    break
+        return redirect("/application")
 if __name__ == "__main__":
     app.run()

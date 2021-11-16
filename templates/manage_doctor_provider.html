@@ -153,19 +153,19 @@
 	
 		<div id="contentcolumn">
             <!-- Need Some help with making a proper table here-->
-            Which kind of vaccination you are adding? <br><br>
-            <form action="/add_new_availability" method="POST">
+            Which medical provider are you in? <br><br>
+            <form action="/manage_doctor_provider" method="POST">
             <table>
                 <tr>
-                    <th>Vaccination Name</th>
-                    <th>Description</th>
-                    <th>Version</th>
-                    <th>FDA Approved</th>
-                    <th>WHO Listed</th>
-                    <th>Under Clinical Trial</th>
-                    <th>Available Amount</th>
+                    <th>Name</th>
+                    <th>Address 1</th>
+                    <th>Address 2</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Zipcode</th>
                 </tr>
-                {% for row in data %}
+                {% for row in medical_provider_data %}
 				<tr>
                     <td>{{row[0]}}</td>
                     <td>{{row[1]}}</td>
@@ -173,14 +173,12 @@
                     <td>{{row[3]}}</td>
                     <td>{{row[4]}}</td>
                     <td>{{row[5]}}</td>
-                    <td><input type="text" name="available_amount_{{row[6]}}" pattern="[0-9]+"></td>
+                    <td>{{row[6]}}</td>
+                    <td><input type="submit" name="{{row[7]}}" value="Select"></td>
 				</tr>
                 {% endfor %}
             </table>
-            <input type="submit" value="Add">
             </form>
-            <br><br>
-            Can't find your vaccination? <a href="/create_vaccination">Add one here!</a>
 		</div>
 	</div>
 

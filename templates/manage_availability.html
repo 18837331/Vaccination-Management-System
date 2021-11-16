@@ -167,13 +167,13 @@
                 </tr>
                 {% for row in data %}
                 <tr>
-                    <th>{{row[0]}}</th>
-                    <th>{{row[1]}}</th>
-                    <th>{{row[2]}}</th>
-                    <th><input type="text" name="available_amount_{{row[7]}}" value="{{row[3]}}" pattern="[0-9]+"></th>
-                    <th>{{row[4]}}</th>
-                    <th>{{row[5]}}</th>
-                    <th>{{row[6]}}</th>
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td><input type="text" name="available_amount_{{row[7]}}" value="{{row[3]}}" pattern="[0-9]+"></td>
+                    <td>{{row[4]}}</td>
+                    <td>{{row[5]}}</td>
+                    <td>{{row[6]}}</td>
                 </tr>
                 {% endfor %}
             </table>
