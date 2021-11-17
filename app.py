@@ -138,7 +138,7 @@ def application():
         usertype = session["usertype"]
     except:
         return redirect("/")
-    if usertype == "patient":
+    if usertype == "vaccine_taker":
         return redirect("/vaccinetakerhome")
     elif usertype == "doctor":
         return redirect("/doctorhome")
@@ -393,5 +393,51 @@ def manage_doctor_provider():
                         cursor.execute(query, (key, id))
                     break
         return redirect("/application")
+
+@app.route("/vaccinetakerhome")
+def vaccinetakerhome():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        username = session["username"]
+    except:
+        return redirect("/")
+    return render_template("vaccinetakerhome.html", username=username)
+
+@app.route("/manage_taker_profile", methods=["POST", "GET"])
+def manage_taker_profile():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        cursor = connection.cursor()
+        query = "SELECT first_name, mid_name, last_name, birthdate, phone_num FROM vaccine_taker where id=%s;"
+        cursor.execute(query, (id,))
+        data = cursor.fetchone()
+        if data:
+            formated_birthdate = data[3][:4] + "-" + data[3][4:6] + "-" + data[3][6:]
+            data = (data[0], data[1], data[2], formated_birthdate, data[4])
+        return render_template("manage_taker_profile.html", data=data, username=username)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            first_name = requestData["fname"]
+            mid_name = requestData["mname"]
+            last_name = requestData["lname"]
+            bd = requestData["birthday"].replace('-','')
+            phone_num = requestData["phone_num"]
+            with connection.cursor() as cursor:
+                query = "UPDATE vaccine_taker SET first_name=%s, mid_name=%s, last_name=%s, birthdate=%s, phone_num=%s WHERE id=%s;"
+                cursor.execute(query, (first_name, mid_name, last_name, bd, phone_num, id))
+            session["username"] = first_name + " " + last_name
+        return redirect("/application")
+
+
 if __name__ == "__main__":
     app.run()

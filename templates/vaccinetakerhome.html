@@ -138,13 +138,13 @@
 	<div id="header">
 	
 		<ul style="display: inline;">
-			<li><a id="home" href="/home">Home</a></li>
-			<li><a id="faq" href="#faq">FAQ</a></li>
-			<li><a id="contact" href="#contact">Contact</a></li>		
-			{% if username is defined %}	
-			<li><p style="color:white;"> Welcome, {{username}}</p></li>  
-			<li><a id="logout" href="/logout">Logout</a></li>
-			{% endif %}    
+		  <li><a id="home" href="/home">Home</a></li>
+		  <li><a id="faq" href="#faq">FAQ</a></li>
+		  <li><a id="contact" href="#contact">Contact</a></li>		
+		  {% if username is defined %}	
+		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
+		  <li><a id="logout" href="/logout">Logout</a></li>
+		  {% endif %}  
 		</ul>
 	
 	</div>
@@ -154,35 +154,16 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-				<form action="/manage_doctor_profile" method="post">
-					<label for="fname">First Name: </label>
-					<input type="text" id="fname" name="fname" value="{{data[0]}}"><br><br>
-					<label for="mname">Middle Name (optional): </label>
-					<input type="text" id="mname" name="mname" value="{{data[1]}}"><br><br>
-					<label for="lname">Last Name: </label>
-					<input type="text" id="lname" name="lname" value="{{data[2]}}"><br><br>
-					<label for="dob">Date of Birth: </label>
-					<input type="date" id="dob" name="birthday" value="{{data[3]}}"><br><br>
-					<label for="phone">Phone Number: </label>
-					<input type="tel" id="phone" name="phone_num" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="{{data[4]}}"><br><br>
-					<input type="submit" value="Update"><br><br>
-				</form>
-                <br><br>
-				{% if mp_data is defined and mp_data is not none %}
-				Your're currently in: {{mp_data[0]}}<br>
-				Address:<br>
-				{{mp_data[1]}}<br>
-				{{mp_data[2]}}<br>
-				{{mp_data[3]}}<br>
-				{{mp_data[4]}}<br>
-				{{mp_data[5]}}<br>
-				{{mp_data[6]}}<br><br>
-				<a href="/manage_doctor_provider" class="button">Change it?</a>
-				{% else %}
-                You're currently not in any medical provider facility. <a href="/manage_doctor_provider">Update it?</a>
-				{% endif %}
+				What action would you like to take today?<br><br>
+				
 			</div>
-			
+			<!--Buttons div:-->
+			<div id="buttonlayout">
+				<a href="/" class="button">COVID-19 Vaccination Appointment<br><br>
+                <a href="/" class="button">Contact Healthcare Provider<br><br>
+                <a href="/" class="button">Vaccination Pass<br><br>
+                <a href="/manage_taker_profile" class="button">Manage Profile<br><br>
+			</div>
 		</div>
 	</div>
 

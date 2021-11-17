@@ -154,7 +154,7 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-				<form action="/manage_doctor_profile" method="post">
+				<form action="/manage_taker_profile" method="post">
 					<label for="fname">First Name: </label>
 					<input type="text" id="fname" name="fname" value="{{data[0]}}"><br><br>
 					<label for="mname">Middle Name (optional): </label>
@@ -164,23 +164,10 @@
 					<label for="dob">Date of Birth: </label>
 					<input type="date" id="dob" name="birthday" value="{{data[3]}}"><br><br>
 					<label for="phone">Phone Number: </label>
-					<input type="tel" id="phone" name="phone_num" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value="{{data[4]}}"><br><br>
+					<input type="tel" id="phone" name="phone_num" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" 
+					value="{{data[4]}}"><br><br>
 					<input type="submit" value="Update"><br><br>
 				</form>
-                <br><br>
-				{% if mp_data is defined and mp_data is not none %}
-				Your're currently in: {{mp_data[0]}}<br>
-				Address:<br>
-				{{mp_data[1]}}<br>
-				{{mp_data[2]}}<br>
-				{{mp_data[3]}}<br>
-				{{mp_data[4]}}<br>
-				{{mp_data[5]}}<br>
-				{{mp_data[6]}}<br><br>
-				<a href="/manage_doctor_provider" class="button">Change it?</a>
-				{% else %}
-                You're currently not in any medical provider facility. <a href="/manage_doctor_provider">Update it?</a>
-				{% endif %}
 			</div>
 			
 		</div>
