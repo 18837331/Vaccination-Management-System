@@ -6,6 +6,7 @@ import hashlib
 import psycopg2
 from functools import wraps
 import time
+import utils.utils as utils
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
@@ -486,6 +487,13 @@ def manage_doctor_time_appointment():
 
 @app.route("/doctor_fill_time_slot", methods=["POST"])
 def doctor_fill_time_slot():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
     if request.form:
             requestData = request.form
             work_start_time = requestData["work_start_time"]
@@ -505,8 +513,12 @@ def doctor_fill_time_slot():
             with connection.cursor() as cursor:
                 query = "UPDATE doctor SET work_start_time=%s, work_end_time=%s, work_monday=%s, work_tuesday=%s, work_wednesday=%s, work_thursday=%s, work_friday=%s, work_saturday=%s, work_sunday=%s WHERE id=%s;"
                 cursor.execute(query, (work_start_time, work_end_time, work_day_dict["work_monday"], work_day_dict["work_tuesday"], work_day_dict["work_wednesday"], work_day_dict["work_thursday"], work_day_dict["work_friday"], work_day_dict["work_saturday"], work_day_dict["work_sunday"], id))
-            #TODO: Create corresponding time slots in 15 mins intervals
             
+            time_slots = utils.generate_time_slots(work_start_time, work_end_time, work_day_dict)
+            for time in time_slots:
+                with connection.cursor() as cursor:
+                    query = "INSERT INTO time_slot (doctor_id, time) VALUES (%s, %s) ON CONFLICT DO NOTHING"
+                    cursor.execute(query, (id, time))
     return redirect("/application")
 
 if __name__ == "__main__":
