@@ -1,3 +1,4 @@
+from typing import DefaultDict
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
 import os
 import uuid
@@ -438,6 +439,50 @@ def manage_taker_profile():
             session["username"] = first_name + " " + last_name
         return redirect("/application")
 
+@app.route("/manage_doctor_time_appointment", methods=["POST","GET"])
+def manage_doctor_time_appointment():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        # Show/manage work hours
+        cursor = connection.cursor()
+        query = "SELECT work_start_time, work_end_time, work_monday, work_tuesday, work_wednesday, work_thursday, work_friday, work_saturday, work_sunday FROM doctor where id=%s;"
+        cursor.execute(query, (id,))
+        work_time_data = cursor.fetchone()
+        # Show upcoming appointments
+        cursor = connection.cursor()
+        query = "SELECT * FROM doctor where id=%s;"
+        cursor.execute(query, (id,))
+        appointment_data = cursor.fetchall()
+        cursor.close()
+        return render_template("manage_doctor_time_appointment.html", username=username, work_time_data=work_time_data, appointment_data=appointment_data)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            work_start_time = requestData["work_start_time"]
+            work_end_time = requestData["work_end_time"]
+            work_day_dict = {
+                "work_monday":0,
+                "work_tuesday":0,
+                "work_wednesday":0,
+                "work_thursday":0,
+                "work_friday":0,
+                "work_saturday":0,
+                "work_sunday":0
+            }
+            for key, value in requestData.items():
+                if value == "on":
+                    work_day_dict[key] = 1
+            with connection.cursor() as cursor:
+                query = "UPDATE doctor SET work_start_time=%s, work_end_time=%s, work_monday=%s, work_tuesday=%s, work_wednesday=%s, work_thursday=%s, work_friday=%s, work_saturday=%s, work_sunday=%s WHERE id=%s;"
+                cursor.execute(query, (work_start_time, work_end_time, work_day_dict["work_monday"], work_day_dict["work_tuesday"], work_day_dict["work_wednesday"], work_day_dict["work_thursday"], work_day_dict["work_friday"], work_day_dict["work_saturday"], work_day_dict["work_sunday"], id))
+        return redirect("/application")
 
 if __name__ == "__main__":
     app.run()
