@@ -154,10 +154,11 @@
 		<div id="contentcolumn">
             Your current work hours:<br>
             <form action="/manage_doctor_time_appointment" method="POST">
+                <!-- TODO: add a javascript to ensure starting time is before ending time-->
                 <label for="work_start_time">Starting from:</label>
                 <select name="work_start_time" id="work_start_time">
                     {%set default_hour = work_time_data[0] %}
-                    {% for i in range(25)%}
+                    {% for i in range(24)%}
                         {%set hour = ('0'+i|string if i < 10 else i|string)%}
                         <option value="{{hour}}00" 
                         {% if default_hour[:2] == hour%}
