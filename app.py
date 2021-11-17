@@ -482,7 +482,32 @@ def manage_doctor_time_appointment():
             with connection.cursor() as cursor:
                 query = "UPDATE doctor SET work_start_time=%s, work_end_time=%s, work_monday=%s, work_tuesday=%s, work_wednesday=%s, work_thursday=%s, work_friday=%s, work_saturday=%s, work_sunday=%s WHERE id=%s;"
                 cursor.execute(query, (work_start_time, work_end_time, work_day_dict["work_monday"], work_day_dict["work_tuesday"], work_day_dict["work_wednesday"], work_day_dict["work_thursday"], work_day_dict["work_friday"], work_day_dict["work_saturday"], work_day_dict["work_sunday"], id))
-        return redirect("/application")
+        return redirect("/manage_doctor_time_appointment")
+
+@app.route("/doctor_fill_time_slot", methods=["POST"])
+def doctor_fill_time_slot():
+    if request.form:
+            requestData = request.form
+            work_start_time = requestData["work_start_time"]
+            work_end_time = requestData["work_end_time"]
+            work_day_dict = {
+                "work_monday":0,
+                "work_tuesday":0,
+                "work_wednesday":0,
+                "work_thursday":0,
+                "work_friday":0,
+                "work_saturday":0,
+                "work_sunday":0
+            }
+            for key, value in requestData.items():
+                if value == "on":
+                    work_day_dict[key] = 1
+            with connection.cursor() as cursor:
+                query = "UPDATE doctor SET work_start_time=%s, work_end_time=%s, work_monday=%s, work_tuesday=%s, work_wednesday=%s, work_thursday=%s, work_friday=%s, work_saturday=%s, work_sunday=%s WHERE id=%s;"
+                cursor.execute(query, (work_start_time, work_end_time, work_day_dict["work_monday"], work_day_dict["work_tuesday"], work_day_dict["work_wednesday"], work_day_dict["work_thursday"], work_day_dict["work_friday"], work_day_dict["work_saturday"], work_day_dict["work_sunday"], id))
+            #TODO: Create corresponding time slots in 15 mins intervals
+            
+    return redirect("/application")
 
 if __name__ == "__main__":
     app.run()
