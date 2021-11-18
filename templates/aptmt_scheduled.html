@@ -154,14 +154,14 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-				What action would you like to take today?<br><br>
+				<b style="font-size=x-large;">You have chosen an appointment at {{provider}} at {{time}}, which physician would you like to oversee your vaccination?</b><br>
 				
 			</div>
 			<!--Buttons div:-->
 			<div id="buttonlayout">
-				<a href="/general_chat" class="button">Private Chat</a><br><br>
-				<a href="/manage_doctor_time_appointment" class="button">Manage Time & Appointments</a><br><br>
-				<a href="/manage_doctor_profile" class="button">Manage Profile</a>
+                <a href="/" class="button">{{doctor[0]}}</a><br><br>
+                <a href="/" class="button">{{doctor[1]}}</a><br><br>
+                <a href="/" class="button">{{doctor[2]}}</a><br><br>
 			</div>
 		</div>
 	</div>
