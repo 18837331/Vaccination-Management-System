@@ -19,29 +19,6 @@
 			height: 100px;
 		}
 		
-		#buttonlayout {
-			padding: 30px;
-			font-family: Arial; 
-			height: 200px;
-			width: 100%;
-		}
-		
-		.button {
-			background-color: #4CAF50; /* Green */
-			border: none;
-			color: white;
-			padding: 15px 16px 15px 16px;
-			text-align: center;
-			text-decoration: none;
-			font-size: 16px;
-		}
-		
-		button {
-			margin-left: auto;
-			margin-right: auto;
-			width:60%;
-		}
-		
 		#contentwrapper {
 			float: left;
 			width: 100%;
@@ -138,13 +115,12 @@
 	<div id="header">
 	
 		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
+		  <li><a id="home" href="/">Home</a></li>
 		  <li><a id="faq" href="#faq">FAQ</a></li>
 		  <li><a id="contact" href="#contact">Contact</a></li>		
 		  {% if username is defined %}	
-		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
-		  <li><a id="logout" href="/logout">Logout</a></li>
-		  {% endif %}  
+		  <li class="active"><p style="color:white;">Welcome, {{username}}</p></li>  
+		  <li><a id="logout" href="/logout">Logout</a></li>		  
 		</ul>
 	
 	</div>
@@ -154,26 +130,35 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-				What action would you like to take today?<br><br>
-				
-			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_selection" class="button">COVID-19 Vaccination Appointment</a><br><br>
-                <a href="/contact_provider_form" class="button">Contact Healthcare Provider</a><br><br>
-                <a href="/vaccine_pass" class="button">Vaccination Pass</a><br><br>
-                <a href="/manage_taker_profile" class="button">Manage Profile</a><br><br>
-			</div>
+			
+				<b style="font-size: x-large; text-align: center;">Vaccination Status Report:</b> <br><br>
+				Please enter you username and password to login to the system:<br><br>
+				<form>
+					<label for="fullname">&nbsp;Full Name: {{last_name}}, {{first_name}} {{middle_name}} </label><br>
+					<label for="vaxstts">&nbsp;Vaccination Status: {{fully vaccinated}}</label><br>
+					<label for="date_of_vax">&nbsp;Date of Last Vaccination: {{11/13/2021}}</label><br>
+  					<label for="expiration">Valid Until: {{05/12/2022}}</label><br>
+					<label for="doctor">&nbsp;Overseeing Physician: {{Dr. Patel, Ananda}}</label><br><br>
+
+				</form>
+				Did you find any inaccuracies in your vaccination status?&nbsp;&nbsp;
+				<a href="/">Click here to report to us!</a>
+			</div>	
 		</div>
 	</div>
 
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
-<script "text/javascript">
-	$(document).on('click', 'ul li', function(){
+<script> "text/javascript">
+	$(document).on('click', 'ul li', function(){N
 		$(this).addClass('active').siblings().removeClass('active')
 	})
+function goToLoginPage() {
+	document.getElementById("home").classlist.remove('active');
+	document.getElementById("login").classlist.add('active');
+	//obj.class = active;
+}
 </script>
 </body>
 </html>
