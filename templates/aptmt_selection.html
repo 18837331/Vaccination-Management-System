@@ -161,25 +161,23 @@
 				(Please note that for each available time-slot you will also be able to choose the overseeing physician)<br><br>
 				
 				<form>
-				<label for="aptmt_date">Please Pick a Date:</label>
+				<label action="/aptmt_selection" method="GET">Please Pick a Date:</label>
 				<input type="date" id="aptmt_date" name="aptmt_date">
 				<input type="submit" value="Check Availability"><br><br>
 				</form>
 				
-				<form>
-				<label>CVS, 432 Fulton St., 11238, Brooklyn, NY:</label><br>
-				&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_scheduled">15:00</a>,
-				<a href="/aptmt_scheduled">15:15</a>,
-				<a href="/aptmt_scheduled">15:30</a>
-				</form><br><br>
-				
-				<form action="/aptmt_scheduled" method="POST">
-				<label>Rite-Aid, 555 Washington Ave., 11238, Brooklny, NY:</label><br>
-				&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_scheduled">15:00</a>,
-				<a href="/aptmt_scheduled">15:15</a>,
-				<a href="/aptmt_scheduled">15:30</a>,
-				</form><br><br>
-				
+				{% if availabilities is defined %}
+					Here are the availabilities for {{date}}: <br><br>
+					{% for row in availabilities %}
+						Facility Name: <b>{{row[1][0]}}</b><br>
+						Location: {{row[1][2]}}, {{row[1][3]}}, {{row[1][4]}}, {{row[1][5]}}<br>
+						Available Timeslots:<br>
+						{% for time in row[2]%}
+							<a href="/aptmt_schedule?id={{row[0]}}&date={{date}}&time={{time}}">{{time}}</a>&nbsp;&nbsp;
+						{% endfor %}
+						<br><br>
+					{% endfor %}
+				{% endif %}
 			</div>	
 		</div>
 	</div>

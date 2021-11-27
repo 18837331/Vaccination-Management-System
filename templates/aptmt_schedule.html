@@ -152,18 +152,42 @@
 	<div id="contentwrapper">
 	
 		<div id="contentcolumn">
-		
+			<form action="/aptmt_schedule" method="post">
 			<div class="innertext">
-				What action would you like to take today?<br><br>
-				
+				<b style="font-size=x-large;">You have chosen an appointment at {{provider[1]}} at {{target_date}} {{target_time}}, which physician would you like to oversee your vaccination?</b><br>
+				<label for="time_slot_id">Doctor's Name:</label>
+                <select name="time_slot_id" id="time_slot_id">
+					{% for row in doctor_data %}
+						<option value="{{row[3]}}">{{row[1]}}, {{row[2]}}</option>
+					{% endfor %}
+				</select>
 			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_selection" class="button">COVID-19 Vaccination Appointment</a><br><br>
-                <a href="/manage_taker_appointment" class="button">Manage Appointments</a><br><br>
-				<a href="/contact_provider_form" class="button">Contact Healthcare Provider</a><br><br>
-                <a href="/vaccine_pass" class="button">Vaccination Pass</a><br><br>
-                <a href="/manage_taker_profile" class="button">Manage Profile</a><br><br>
+			
+			<div class="innertext">
+				<b style="font-size=x-large;">Which vaccination?</b><br>
+				<label for="vaccine_select">Vaccination:</label>
+				<select name="vaccine_select" id="vaccine_select">
+					{% for row in vaccine_data %}
+						<option value="{{row[0]}}">{{row[1]}}</option>
+					{% endfor %}
+				</select>
+			</div>
+
+			<div class="innertext">
+				<b style="font-size=x-large;">Dose Number?</b><br>
+				<label for="dose_num">Vaccination:</label>
+				<select name="dose_num" id="dose_num">
+					<option value="1">First Dose</option>
+					<option value="2">Second Dose</option>
+					<option value="3">Third Dose</option>
+				</select>
+			</div>
+
+			<div class="innertext">
+				Any notes?<br>
+				<input type="text" name="notes" height="4" size="80"><br><br>
+				<input type="hidden" name="medical_provider_id" value="{{provider[0]}}">
+				<input type="submit" value="Make Appointment">
 			</div>
 		</div>
 	</div>

@@ -152,16 +152,29 @@
 	<div id="contentwrapper">
 	
 		<div id="contentcolumn">
-		
+			<form action="/aptmt_schedule" method="post">
 			<div class="innertext">
-				<b style="font-size=x-large;">You have chosen an appointment at {{provider}} at {{time}}, which physician would you like to oversee your vaccination?</b><br>
-				
-			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-                <a href="/" class="button">{{doctor[0]}}</a><br><br>
-                <a href="/" class="button">{{doctor[1]}}</a><br><br>
-                <a href="/" class="button">{{doctor[2]}}</a><br><br>
+				<table>
+                    <tr>
+                        <th>Vaccination Name</th>
+                        <th>Doctor's Name</th>
+                        <th>Appointment Time</th>
+                        <th>Status</th>
+                        <th>Dose Number</th>
+                        <th>Doctor's Note</th>
+                        <th>Vaccine Taker's Note</th>
+                    </tr>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{row[0]}}</td>
+                        <td>{{row[1]}} {{row[2]}}</td>
+                        <td>{{row[3]}}</td>
+                        <td>{{row[4]}}</td>
+                        <td>{{row[5]}}</td>
+                        <td>{{row[6]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
 			</div>
 		</div>
 	</div>

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import DefaultDict
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
 import os
@@ -520,6 +521,149 @@ def doctor_fill_time_slot():
                     query = "INSERT INTO time_slot (doctor_id, time) VALUES (%s, %s) ON CONFLICT DO NOTHING"
                     cursor.execute(query, (id, time))
     return redirect("/application")
+
+@app.route("/aptmt_selection")
+def aptmt_selection():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        username = session["username"]
+    except:
+        return redirect("/")
+    params = request.args
+    if params.get("aptmt_date") is not None:
+        target_date = datetime.today().strftime("%Y-%m-%d")
+        if params.get("aptmt_date") != "":
+            target_date = params["aptmt_date"]
+        formatted_date = target_date.replace("-", "")
+        # Get all time slots on target date
+        query = """select id, name, address1, city, state, country, zipcode, tmp2.time from medical_provider join(
+            select doctor.medical_provider_id, tmp.time from doctor join (
+                select doctor_id, time from time_slot where substring(time, 1, 8) = %s and status = 1
+            ) tmp on doctor.id = tmp.doctor_id
+        ) tmp2 on tmp2.medical_provider_id = medical_provider.id;"""
+        cursor = connection.cursor()
+        cursor.execute(query, (formatted_date,))
+        data = cursor.fetchall()
+        cursor.close()
+        availabilities = utils.format_apt_selection(data)
+        return render_template("aptmt_selection.html", username=username, date=target_date, availabilities=availabilities)
+    else:
+        return render_template("aptmt_selection.html", username=username)
+
+@app.route("/aptmt_schedule", methods=["GET", "POST"])
+def aptmt_schedule():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        params = request.args
+        if params.get("date") is not None and params.get("time") is not None and params.get("id") is not None:
+            target_date = params["date"]
+            target_time = params["time"]
+            formatted_time = target_date.replace("-", "")+target_time.replace(":", "")
+            medical_provider_id = params["id"]
+            cursor = connection.cursor()
+            provider_query = "select id, name from medical_provider where id =%s"
+            cursor.execute(provider_query, (medical_provider_id,))
+            provider = cursor.fetchone()
+            vaccine_query = """
+            select vaccination.id, vaccine_name from vaccination join(
+                select * from availability where available_num > 0
+            ) tmp on vaccination.id = tmp.vaccination_id
+            where id = %s;
+            """
+            cursor.execute(vaccine_query, (medical_provider_id,))
+            vaccine_data = cursor.fetchall()
+            doctor_query = """
+                select doctor.id, first_name, last_name, tmp.time_slot_id from doctor join(
+                    select id time_slot_id, doctor_id from time_slot where time = %s and status = 1
+                ) tmp on doctor.id = tmp.doctor_id and medical_provider_id = %s;
+            """
+            cursor.execute(doctor_query, (formatted_time, medical_provider_id))
+            doctor_data = cursor.fetchall()
+            cursor.close()
+            return render_template("aptmt_schedule.html", username=username, vaccine_data=vaccine_data, doctor_data=doctor_data, target_date=target_date, target_time=target_time, provider=provider)
+        else:
+            return redirect("/application")
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            vaccine_id = int(requestData["vaccine_select"])
+            medical_provider_id = int(requestData["medical_provider_id"])
+            time_slot_id = int(requestData["time_slot_id"])
+            notes = requestData["notes"]
+            dose_num = requestData["dose_num"]
+            connection.rollback()
+            connection.autocommit = False
+            try:
+                with connection.cursor() as cursor:
+                    # Update time_slot status
+                    time_slot_query = "update time_slot set status = 2 where id = %s"
+                    cursor.execute(time_slot_query, (time_slot_id,))
+                    # Insert an appointment and vaccine_result
+                    vaccine_result_query = "insert into vaccine_result (success) values (2) returning id;"
+                    cursor.execute(vaccine_result_query)
+                    vaccine_result_id = cursor.fetchone()[0]
+                    appointment_query = """
+                    insert into appointment (vaccine_taker_id, time_slot_id, dose_num, vaccine_id, 
+                    status, vaccine_taker_note, vaccine_result_id) values (
+                    %s, %s, %s, %s, %s, %s, %s);
+                    """
+                    cursor.execute(appointment_query, (id, time_slot_id, dose_num, vaccine_id, 1, notes, vaccine_result_id))
+                    # Update availability
+                    availability_query = """
+                    update availability set
+                    available_num = available_num - 1,
+                    in_progress_num = in_progress_num + 1
+                    where medical_provider_id = %s and vaccination_id = %s;
+                    """
+                    cursor.execute(availability_query, (medical_provider_id, vaccine_id))
+                    connection.commit()
+            except:
+                connection.rollback()
+            finally:
+                connection.autocommit = True
+        return redirect("/application")
+
+@app.route("/manage_taker_appointment", methods=["GET", "POST"])
+def manage_taker_appointment():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        username = session["username"]
+        id = session["id"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        cursor = connection.cursor()
+        query = """
+        select vaccine_name, tmp4.first_name, tmp4.last_name, tmp4.time, tmp4.success, tmp4.dose_num, tmp4.doctor_notes, tmp4.vaccine_taker_note from
+            (select first_name, last_name, tmp3.time, tmp3.success, tmp3.dose_num, tmp3.vaccine_id, tmp3.doctor_notes, tmp3.vaccine_taker_note from
+                (select doctor_id, time, tmp2.success, tmp2.dose_num, tmp2.vaccine_id, tmp2.doctor_notes, tmp2.vaccine_taker_note from
+                    (select success, tmp.time_slot_id, tmp.dose_num, tmp.vaccine_id, tmp.doctor_notes, tmp.vaccine_taker_note from 
+                        (select time_slot_id, dose_num, vaccine_id, doctor_notes, vaccine_taker_note, vaccine_result_id
+                        from appointment where vaccine_taker_id = %s)
+                    tmp join vaccine_result on vaccine_result.id = tmp.vaccine_result_id)
+                tmp2 join time_slot on tmp2.time_slot_id = time_slot.id)
+            tmp3 join doctor on tmp3.doctor_id = doctor.id)
+        tmp4 join vaccination on vaccination.id = tmp4.vaccine_id
+        """
+        cursor.execute(query, (id, ))
+        data = list(cursor.fetchall())
+        for i in range(len(data)):
+            data[i] = list(data[i])
+            data[i][4] = utils.VACCINE_RESULT_STATUS[data[i][4]]
+            data[i][3] = utils.format_time(data[i][3])
+        return render_template("manage_taker_appointment.html", username=username, data=data)
+    return render_template("manage_taker_appointment.html", username=username)
 
 if __name__ == "__main__":
     app.run()

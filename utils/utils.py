@@ -1,5 +1,7 @@
 from datetime import datetime, time, timedelta
 
+VACCINE_RESULT_STATUS = {1:"Success", 0:"Failed", 2:"In Progress"}
+
 # Input a dict indicating which weekday is working 
 # Output a list of 0/1 where 0 indicates not working and 1 indicates working
 def generate_weekday_list(work_day_dict):
@@ -40,4 +42,27 @@ def generate_time_slots(work_start_time, work_end_time, work_day_dict):
                 result.append(start.strftime("%Y%m%d%H%M"))
         # Forward start by 15 minutes
         start = start + timedelta(minutes=15)
+    return result
+
+def format_apt_selection(data):
+    provider_id_info_dict = {}
+    provider_id_time_dict = {}
+    formatted_data = []
+    for t in data:
+        curr_id = t[0]
+        id_time = t[7]
+        if provider_id_info_dict.get(curr_id) is not None:
+            provider_id_time_dict[curr_id].append(id_time[-4:-2]+":"+id_time[-2:])
+        else:
+            id_info = (t[1],t[2],t[3],t[4],t[5],t[6])
+            provider_id_info_dict[curr_id] = id_info
+            provider_id_time_dict[curr_id] = [id_time[-4:-2]+":"+id_time[-2:]]
+    for id, info in provider_id_info_dict.items():
+        time_slots = provider_id_time_dict[id]
+        formatted_data.append((id,info,time_slots))
+    return formatted_data
+
+# Turn YYYYmmDDHHMM to YYYY-mm-DD HH:MM
+def format_time(origin):
+    result = origin[:4] + "-" + origin[4:6] + "-" + origin[6:8] + " " + origin[8:10] + ":" + origin[10:]
     return result
