@@ -142,7 +142,7 @@
 		  <li><a id="faq" href="#faq">FAQ</a></li>
 		  <li><a id="contact" href="#contact">Contact</a></li>		
 		  {% if username is defined %}	
-		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
+		  <li class="active"><p style="color:white;"> Welcome, {{username}}</p></li>  
 		  <li><a id="logout" href="/logout">Logout</a></li>
 		  {% endif %}  
 		</ul>
@@ -159,7 +159,7 @@
 			</div>
 			<!--Buttons div:-->
 			<div id="buttonlayout">
-				<a href="/" class="button">Private Chat</a><br><br>
+				<a href="/general_chat" class="button">Private Chat</a><br><br>
 				<a href="/manage_doctor_time_appointment" class="button">Manage Time & Appointments</a><br><br>
 				<a href="/manage_doctor_profile" class="button">Manage Profile</a>
 			</div>

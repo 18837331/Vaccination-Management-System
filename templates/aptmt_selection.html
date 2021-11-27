@@ -26,6 +26,7 @@
 			width: 100%;
 		}
 		
+
 		.button {
 			background-color: #4CAF50; /* Green */
 			border: none;
@@ -140,11 +141,11 @@
 		<ul style="display: inline;">
 		  <li><a id="home" href="/home">Home</a></li>
 		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		
+		  <li><a id="contact" href="#contact">Contact</a></li>	
 		  {% if username is defined %}	
 		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
 		  <li><a id="logout" href="/logout">Logout</a></li>
-		  {% endif %}  
+		  {% endif %} 		  
 		</ul>
 	
 	</div>
@@ -154,16 +155,32 @@
 		<div id="contentcolumn">
 		
 			<div class="innertext">
-				What action would you like to take today?<br><br>
+			
+				<b style="font-size: x-large;">We're here for you {{username}}!</b> <br><br>
+				Please click on one of the following available time-slots for vaccination at the facility of your choice:<br>
+				(Please note that for each available time-slot you will also be able to choose the overseeing physician)<br><br>
 				
-			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_selection" class="button">COVID-19 Vaccination Appointment</a><br><br>
-                <a href="/contact_provider_form" class="button">Contact Healthcare Provider</a><br><br>
-                <a href="/vaccine_pass" class="button">Vaccination Pass</a><br><br>
-                <a href="/manage_taker_profile" class="button">Manage Profile</a><br><br>
-			</div>
+				<form>
+				<label for="aptmt_date">Please Pick a Date:</label>
+				<input type="date" id="aptmt_date" name="aptmt_date">
+				<input type="submit" value="Check Availability"><br><br>
+				</form>
+				
+				<form>
+				<label>CVS, 432 Fulton St., 11238, Brooklyn, NY:</label><br>
+				&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_scheduled">15:00</a>,
+				<a href="/aptmt_scheduled">15:15</a>,
+				<a href="/aptmt_scheduled">15:30</a>
+				</form><br><br>
+				
+				<form action="/aptmt_scheduled" method="POST">
+				<label>Rite-Aid, 555 Washington Ave., 11238, Brooklny, NY:</label><br>
+				&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_scheduled">15:00</a>,
+				<a href="/aptmt_scheduled">15:15</a>,
+				<a href="/aptmt_scheduled">15:30</a>,
+				</form><br><br>
+				
+			</div>	
 		</div>
 	</div>
 
