@@ -163,6 +163,7 @@
                         <th>Dose Number</th>
                         <th>Doctor's Note</th>
                         <th>Vaccine Taker's Note</th>
+                        <th>Action</th>
                     </tr>
                     {% for row in data %}
                     <tr>
@@ -172,6 +173,10 @@
                         <td>{{row[4]}}</td>
                         <td>{{row[5]}}</td>
                         <td>{{row[6]}}</td>
+                        <td>{{row[7]}}</td>
+                        {% if 'In Progress' in row[4] %}
+                            <td><a href="/appointment_remove_taker?id={{row[8]}}">Cancel</a></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </table>

@@ -228,6 +228,36 @@
                 <input type="submit" formaction="/doctor_fill_time_slot" value="Fill timeslot till nextweek">
             </form>
 		</div>
+		<div id="contentcolumn">
+			<table>
+				<tr>
+					<th>Vaccination Name</th>
+					<th>Vaccine_taker's Name</th>
+					<th>Appointment Time</th>
+					<th>Status</th>
+					<th>Dose Number</th>
+					<th>Doctor's Note</th>
+					<th>Vaccine Taker's Note</th>
+					<th>Actions</th>
+				</tr>
+				{% for row in appointment_data %}
+				<tr>
+					<td>{{row[0]}}</td>
+					<td>{{row[1]}} {{row[2]}}</td>
+					<td>{{row[3]}}</td>
+					<td>{{row[4]}}</td>
+					<td>{{row[5]}}</td>
+					<td>{{row[6]}}</td>
+					<td>{{row[7]}}</td>
+					{% if 'In Progress' in row[4] %}
+						<td><a href="/appointment_success?id={{row[8]}}">Success</a>
+						<a href="/appointment_failed?id={{row[8]}}">Failed</a>
+						<a href="/appointment_cancel_doctor?id={{row[8]}}">Cancel</a></td>
+					{% endif %}
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
 	</div>
 
 </div>

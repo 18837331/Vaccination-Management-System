@@ -459,9 +459,22 @@ def manage_doctor_time_appointment():
         work_time_data = cursor.fetchone()
         # Show upcoming appointments
         cursor = connection.cursor()
-        query = "SELECT * FROM doctor where id=%s;"
+        query = """
+        select vaccine_name, first_name, last_name, time, success, dose_num, doctor_notes, vaccine_taker_note, appointment_id from
+            (select first_name, last_name, success, time, dose_num, vaccine_id, doctor_notes, vaccine_taker_note, appointment_id from
+                (select success, time, dose_num, vaccine_taker_id, vaccine_id, doctor_notes, vaccine_taker_note, appointment_id from
+                    (select time, dose_num, vaccine_taker_id, vaccine_id, doctor_notes, vaccine_taker_note, vaccine_result_id, appointment.id appointment_id
+                    from appointment join time_slot on appointment.time_slot_id = time_slot.id where time_slot.doctor_id=%s)
+                tmp join vaccine_result on vaccine_result.id = tmp.vaccine_result_id)
+            tmp2 join vaccine_taker on tmp2.vaccine_taker_id = vaccine_taker.id)
+        tmp3 join vaccination on vaccination.id = tmp3.vaccine_id
+        """
         cursor.execute(query, (id,))
-        appointment_data = cursor.fetchall()
+        appointment_data = list(cursor.fetchall())
+        for i in range(len(appointment_data)):
+            appointment_data[i] = list(appointment_data[i])
+            appointment_data[i][4] = utils.VACCINE_RESULT_STATUS[appointment_data[i][4]]
+            appointment_data[i][3] = utils.format_time(appointment_data[i][3])
         cursor.close()
         return render_template("manage_doctor_time_appointment.html", username=username, work_time_data=work_time_data, appointment_data=appointment_data)
     elif request.method == "POST":
@@ -616,7 +629,7 @@ def aptmt_schedule():
                     status, vaccine_taker_note, vaccine_result_id) values (
                     %s, %s, %s, %s, %s, %s, %s);
                     """
-                    cursor.execute(appointment_query, (id, time_slot_id, dose_num, vaccine_id, 1, notes, vaccine_result_id))
+                    cursor.execute(appointment_query, (id, time_slot_id, dose_num, vaccine_id, 2, notes, vaccine_result_id))
                     # Update availability
                     availability_query = """
                     update availability set
@@ -645,11 +658,11 @@ def manage_taker_appointment():
     if request.method == "GET":
         cursor = connection.cursor()
         query = """
-        select vaccine_name, tmp4.first_name, tmp4.last_name, tmp4.time, tmp4.success, tmp4.dose_num, tmp4.doctor_notes, tmp4.vaccine_taker_note from
-            (select first_name, last_name, tmp3.time, tmp3.success, tmp3.dose_num, tmp3.vaccine_id, tmp3.doctor_notes, tmp3.vaccine_taker_note from
-                (select doctor_id, time, tmp2.success, tmp2.dose_num, tmp2.vaccine_id, tmp2.doctor_notes, tmp2.vaccine_taker_note from
-                    (select success, tmp.time_slot_id, tmp.dose_num, tmp.vaccine_id, tmp.doctor_notes, tmp.vaccine_taker_note from 
-                        (select time_slot_id, dose_num, vaccine_id, doctor_notes, vaccine_taker_note, vaccine_result_id
+        select vaccine_name, tmp4.first_name, tmp4.last_name, tmp4.time, tmp4.success, tmp4.dose_num, tmp4.doctor_notes, tmp4.vaccine_taker_note, appointment_id from
+            (select first_name, last_name, tmp3.time, tmp3.success, tmp3.dose_num, tmp3.vaccine_id, tmp3.doctor_notes, tmp3.vaccine_taker_note, appointment_id from
+                (select doctor_id, time, tmp2.success, tmp2.dose_num, tmp2.vaccine_id, tmp2.doctor_notes, tmp2.vaccine_taker_note, appointment_id from
+                    (select success, tmp.time_slot_id, tmp.dose_num, tmp.vaccine_id, tmp.doctor_notes, tmp.vaccine_taker_note, appointment_id from 
+                        (select time_slot_id, dose_num, vaccine_id, doctor_notes, vaccine_taker_note, vaccine_result_id, appointment.id appointment_id
                         from appointment where vaccine_taker_id = %s)
                     tmp join vaccine_result on vaccine_result.id = tmp.vaccine_result_id)
                 tmp2 join time_slot on tmp2.time_slot_id = time_slot.id)
@@ -664,6 +677,142 @@ def manage_taker_appointment():
             data[i][3] = utils.format_time(data[i][3])
         return render_template("manage_taker_appointment.html", username=username, data=data)
     return render_template("manage_taker_appointment.html", username=username)
+
+@app.route("/appointment_success")
+def appointment_success():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    params = request.args
+    if params.get("id") is not None and params.get("id") != "":
+        appointment_id = int(params["id"])
+        with connection.cursor() as cursor:
+            query = """
+            do
+            $do$
+            begin
+                if exists (select * from appointment join time_slot on appointment.time_slot_id = time_slot.id where appointment.id=%s and doctor_id=%s and appointment.status=2) then
+                update vaccine_result set success = 1 from 
+                    (select * from appointment where id = %s)
+                tmp where vaccine_result.id = tmp.vaccine_result_id;
+                update availability
+                set in_progress_num = in_progress_num - 1, used_num = used_num + 1
+                from 
+                    (select * from appointment where id = %s)
+                tmp2 where availability.vaccination_id = tmp2.vaccine_id;
+                    update appointment set status = 1 where id = %s;
+                end if;
+            end
+            $do$
+            """
+            cursor.execute(query, (appointment_id, id, appointment_id, appointment_id, appointment_id))
+    return redirect("/application")
+
+@app.route("/appointment_failed")
+def appointment_failed():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    params = request.args
+    if params.get("id") is not None and params.get("id") != "":
+        appointment_id = int(params["id"])
+        with connection.cursor() as cursor:
+            query = """
+            do
+            $do$
+            begin
+                if exists (select * from appointment join time_slot on appointment.time_slot_id = time_slot.id where appointment.id=%s and doctor_id=%s and appointment.status=2) then
+                update vaccine_result set success = 0 from 
+                    (select * from appointment where id = %s)
+                tmp where vaccine_result.id = tmp.vaccine_result_id;
+                update availability
+                set in_progress_num = in_progress_num - 1, available_num = available_num + 1
+                from 
+                    (select * from appointment where id = %s)
+                tmp2 where availability.vaccination_id = tmp2.vaccine_id;
+                update appointment set status = 0 where id = %s;
+                end if;
+            end
+            $do$
+            """
+            cursor.execute(query, (appointment_id, id, appointment_id, appointment_id, appointment_id))
+    return redirect("/application")
+
+@app.route("/appointment_cancel_doctor")
+def appointment_cancel_doctor():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    params = request.args
+    if params.get("id") is not None and params.get("id") != "":
+        appointment_id = int(params["id"])
+        with connection.cursor() as cursor: 
+            query = """
+                do
+                $do$
+                begin
+                    if exists (select * from appointment join time_slot on appointment.time_slot_id = time_slot.id where appointment.id=%s and doctor_id=%s and appointment.status=2) then
+                    update vaccine_result set success = 4 from 
+                        (select * from appointment where id = %s)
+                    tmp where vaccine_result.id = tmp.vaccine_result_id;
+                    update availability
+                    set in_progress_num = in_progress_num - 1, available_num = available_num + 1
+                    from 
+                        (select * from appointment where id = %s)
+                    tmp2 where availability.vaccination_id = tmp2.vaccine_id;
+                    update appointment set status = 4 where id = %s;
+                    end if;
+                end
+                $do$
+            """
+            cursor.execute(query, (appointment_id, id, appointment_id, appointment_id, appointment_id))
+    return redirect("/application")
+
+@app.route("/appointment_cancel_taker")
+def appointment_cancel_taker():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        id = session["id"]
+    except:
+        return redirect("/")
+    params = request.args
+    if params.get("id") is not None and params.get("id") != "":
+        appointment_id = int(params["id"])
+        with connection.cursor() as cursor: 
+            query = """
+                do
+                $do$
+                begin
+                    if exists (select * from appointment where appointment.id=%s and vaccine_taker_id=%s and appointment.status=2) then
+                    update vaccine_result set success = 3 from 
+                        (select * from appointment where id = %s)
+                    tmp where vaccine_result.id = tmp.vaccine_result_id;
+                    update availability
+                    set in_progress_num = in_progress_num - 1, available_num = available_num + 1
+                    from 
+                        (select * from appointment where id = %s)
+                    tmp2 where availability.vaccination_id = tmp2.vaccine_id;
+                    update appointment set status = 3 where id = %s;
+                    end if;
+                end
+                $do$
+            """
+            cursor.execute(query, (appointment_id, id, appointment_id, appointment_id, appointment_id))
+    return redirect("/application")
 
 if __name__ == "__main__":
     app.run()
