@@ -15,8 +15,8 @@ IMAGES_DIR = os.path.join(os.getcwd(), "images")
 
 connection = psycopg2.connect(host="localhost",
                              user="postgres",
-                             password="1116",
-                             database="test")
+                             password="root",
+                             database="vacc")
 connection.autocommit = True
 
 
@@ -664,6 +664,39 @@ def manage_taker_appointment():
             data[i][3] = utils.format_time(data[i][3])
         return render_template("manage_taker_appointment.html", username=username, data=data)
     return render_template("manage_taker_appointment.html", username=username)
+
+@app.route("/vaccine_pass", methods=["get"])
+def vaccine_pass():
+    usertype = session["usertype"]
+    if usertype != "vaccine_taker":
+        return redirect("/application")
+    id = session["id"]
+    username=session["username"]
+    cursor = connection.cursor()
+    query="""
+    select vaccine_taker.first_name, vaccine_taker.mid_name, vaccine_taker.last_name,doctor.first_name as doctor_fname,
+    doctor.mid_name as doctor_mname, doctor.last_name as doctor_lname, time_slot.time as date, appointment.status
+    from appointment 
+    inner join vaccine_taker on appointment.vaccine_taker_id=vaccine_taker.id
+    inner join time_slot on appointment.time_slot_id = time_slot.id
+    inner join doctor on doctor.id=time_slot.doctor_id
+    where appointment.vaccine_taker_id=%s and appointment.dose_num>=2 and appointment.status=1
+    order by appointment.dose_num DESC;
+    """
+ 
+    cursor.execute(query, (id, ))
+    data=cursor.fetchone()
+    if (data is not None):
+        data[6] = utils.format_time(data[6])
+        return render_template("vaccine_pass.html", username=username, data=data)
+    else:
+        query="select first_name, mid_name, last_name from vaccine_taker where id=%s"
+        cursor.execute(query, (id, ))
+        data=cursor.fetchone()
+        return render_template("vaccine_not_pass.html", username=username,data=data)
+
+
+
 
 if __name__ == "__main__":
     app.run()
