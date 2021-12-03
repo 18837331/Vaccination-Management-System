@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-VACCINE_RESULT_STATUS = {1:"Success", 0:"Failed", 2:"In Progress"}
+VACCINE_RESULT_STATUS = {1:"Success", 0:"Failed", 2:"In Progress", 3:"Canceled by Vaccine Taker", 4:"Canceled by Doctor"}
 
 # Input a dict indicating which weekday is working 
 # Output a list of 0/1 where 0 indicates not working and 1 indicates working

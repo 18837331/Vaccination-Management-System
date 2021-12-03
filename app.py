@@ -15,8 +15,8 @@ IMAGES_DIR = os.path.join(os.getcwd(), "images")
 
 connection = psycopg2.connect(host="localhost",
                              user="postgres",
-                             password="root",
-                             database="vacc")
+                             password="1116",
+                             database="test")
 connection.autocommit = True
 
 
@@ -660,6 +660,7 @@ def manage_taker_appointment():
         data = list(cursor.fetchall())
         for i in range(len(data)):
             data[i] = list(data[i])
+            print(data[i])
             data[i][4] = utils.VACCINE_RESULT_STATUS[data[i][4]]
             data[i][3] = utils.format_time(data[i][3])
         return render_template("manage_taker_appointment.html", username=username, data=data)
