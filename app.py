@@ -117,12 +117,9 @@ def registerAuth():
             hashedPassword = hashlib.sha256(plaintextPasword.encode("utf-8")).hexdigest()
             try:
                 with connection.cursor() as cursor:
-                    print("Before query")
                     query = "INSERT INTO medical_provider (name, password, address1, address2, city, state, country, zipcode, email, phone_num) VALUES (%s, %s, %s, %s,%s, %s, %s, %s, %s, %s)"
                     cursor.execute(query, (name, hashedPassword, address1, address2, city, state, country, zipcode, email, phone_num))
-                    print("Query Success")
             except psycopg2.IntegrityError:
-                print("Exception")
                 error = "%s is already taken." % (email)
                 return render_template('register.html', error=error)
         return redirect("/loginpage")
@@ -261,7 +258,6 @@ def add_new_availability_page():
     data = cursor.fetchall()
     cursor.close()
     if data:
-        print(data)
         return render_template("add_new_availability_page.html", username=username, data=data)
     return render_template("add_new_availability_page.html", username=username)
 
@@ -673,7 +669,6 @@ def manage_taker_appointment():
         data = list(cursor.fetchall())
         for i in range(len(data)):
             data[i] = list(data[i])
-            print(data[i])
             data[i][4] = utils.VACCINE_RESULT_STATUS[data[i][4]]
             data[i][3] = utils.format_time(data[i][3])
         return render_template("manage_taker_appointment.html", username=username, data=data)
@@ -846,6 +841,132 @@ def appointment_cancel_taker():
             """
             cursor.execute(query, (appointment_id, id, appointment_id, appointment_id, appointment_id))
     return redirect("/application")
+
+@app.route("/taker_chat_selection")
+def taker_chat_selection():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    query = """
+    select doctor_id, first_name, last_name, medical_provider.name from
+        (select doctor_id, first_name, last_name, medical_provider_id from
+            (select distinct doctor_id 
+            from appointment join time_slot on appointment.time_slot_id = time_slot.id
+            where vaccine_taker_id = %s)
+        tmp join doctor on tmp.doctor_id = doctor.id)
+    tmp2 join medical_provider on medical_provider_id = medical_provider.id
+    """
+    cursor = connection.cursor()
+    cursor.execute(query, (id,))
+    data = cursor.fetchall()
+    return render_template("taker_chat_selection.html", username=username, data=data)
+
+@app.route("/general_chat_taker", methods=["GET","POST"])
+def general_chat_taker():
+    try:
+        usertype = session["usertype"]
+        if usertype != "vaccine_taker":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        params = request.args
+        if params["doctor_id"] is None or params["doctor_id"] == "":
+            return redirect("/taker_chat_selection")
+        doctor_id = params["doctor_id"]
+        query = """
+        select doctor.first_name doctor_fname, doctor.last_name doctor_lname, direction, content, if_read, tmp.create_time, doctor_id from
+        (select vaccine_taker_id, doctor_id, direction, content, if_read, create_time from message
+        where vaccine_taker_id = %s and doctor_id = %s and valid = 1
+        order by create_time asc)
+        tmp join doctor on doctor.id = tmp.doctor_id
+        """
+        cursor = connection.cursor()
+        cursor.execute(query, (id,doctor_id))
+        messages = list(cursor.fetchall())
+        messages = utils.process_messages(messages)
+        return render_template("general_chat_taker.html", username=username, id=id, messages=messages)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            doctor_id = requestData["doctor_id"]
+            content = requestData["content"]
+            query = """
+            insert into message (doctor_id, vaccine_taker_id, direction, content)
+            values (%s,%s,0,%s)	
+            """
+            with connection.cursor() as cursor:
+                cursor.execute(query, (doctor_id, id, content))
+        return redirect(url_for("general_chat_taker", doctor_id=doctor_id))
+
+@app.route("/doctor_chat_selection")
+def doctor_chat_selection():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    query = """
+    select vaccine_taker_id, vaccine_taker.first_name, vaccine_taker.last_name from
+        (select distinct vaccine_taker_id
+        from appointment join time_slot on appointment.time_slot_id = time_slot.id
+        where doctor_id=%s)
+    tmp join vaccine_taker on tmp.vaccine_taker_id = vaccine_taker.id
+    """
+    cursor = connection.cursor()
+    cursor.execute(query, (id,))
+    data = cursor.fetchall()
+    return render_template("doctor_chat_selection.html", username=username, data=data)
+
+@app.route("/general_chat_doctor", methods=["GET","POST"])
+def general_chat_doctor():
+    try:
+        usertype = session["usertype"]
+        if usertype != "doctor":
+            return redirect("/application")
+        id = session["id"]
+        username = session["username"]
+    except:
+        return redirect("/")
+    if request.method == "GET":
+        params = request.args
+        if params["vaccine_taker_id"] is None or params["vaccine_taker_id"] == "":
+            return redirect("/doctor_chat_selection")
+        vaccine_taker_id = params["vaccine_taker_id"]
+        query = """
+            select vaccine_taker.first_name, vaccine_taker.last_name, direction, content, if_read, tmp.create_time, vaccine_taker_id from
+                (select vaccine_taker_id, direction, content, if_read, create_time from message
+                where vaccine_taker_id = %s and doctor_id = %s and valid = 1
+                order by create_time asc)
+            tmp join vaccine_taker on vaccine_taker.id = tmp.vaccine_taker_id
+        """
+        cursor = connection.cursor()
+        cursor.execute(query, (vaccine_taker_id, id))
+        messages = list(cursor.fetchall())
+        messages = utils.process_messages(messages)
+        return render_template("general_chat_doctor.html", username=username, id=id, messages=messages)
+    elif request.method == "POST":
+        if request.form:
+            requestData = request.form
+            vaccine_taker_id = requestData["vaccine_taker_id"]
+            content = requestData["content"]
+            query = """
+            insert into message (doctor_id, vaccine_taker_id, direction, content)
+            values (%s,%s,1,%s)	
+            """
+            with connection.cursor() as cursor:
+                cursor.execute(query, (id, vaccine_taker_id, content))
+        return redirect(url_for("general_chat_doctor", vaccine_taker_id=vaccine_taker_id))
 
 if __name__ == "__main__":
     app.run()

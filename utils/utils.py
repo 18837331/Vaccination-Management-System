@@ -66,3 +66,24 @@ def format_apt_selection(data):
 def format_time(origin):
     result = origin[:4] + "-" + origin[4:6] + "-" + origin[6:8] + " " + origin[8:10] + ":" + origin[10:]
     return result
+
+# Process and combine messages
+def process_messages(messages):
+    result = []
+    p = 0
+    tmp = []
+    tmp_direction = -1
+    while p < len(messages):
+        if tmp_direction == -1 or messages[p][2] == tmp_direction:
+            curr_message = list(messages[p])
+            curr_message[5] = curr_message[5].strftime("%Y-%m-%d %H:%M")
+            tmp.append(curr_message)
+            tmp_direction = messages[p][2]
+            p += 1
+        else:
+            result.append(tmp)
+            tmp = []
+            tmp_direction = -1
+    if len(tmp) != 0:
+        result.append(tmp)
+    return result

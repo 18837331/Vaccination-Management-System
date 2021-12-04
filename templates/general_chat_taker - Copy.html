@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaccination Management System</title>
+<!-- Bootstrap -->
+<link href="bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+
+		body {
+			margin:0;
+			padding:0;
+			line-height: 1.5em;
+		}
+		
+		#header {
+			background: black;
+			font-family: Arial; 
+			height: 100px;
+		}
+		
+		$blue: #74b9ff;
+
+		body {
+		  //background-image: url('https://images.unsplash.com/photo-1560568082-c15188aa6510?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3300&q=80');
+		  background-color: #3498db;
+		  -webkit-font-smoothing: antialiased;
+		  -moz-osx-font-smoothing: grayscale;
+		  text-rendering: optimizeLegibility;
+		}
+
+		.container {
+		  margin: 60px auto;
+		  background: #fff;
+		  padding: 0;
+		  border-radius: 7px;
+		}
+
+		.profile-image {
+		  width: 50px;
+		  height: 50px;
+		  border-radius: 40px;
+		}
+
+		.settings-tray {
+		  background: #eee;
+		  padding: 10px 15px;
+		  border-radius: 7px;
+		  
+		  .no-gutters {
+			padding: 0;
+		  }
+		  
+		  &--right {
+			float: right;
+			
+			i {
+			  margin-top: 10px;
+			  font-size: 25px;
+			  color: grey;
+			  margin-left: 14px;
+			  transition: .3s;
+			  
+			  &:hover {
+				color: $blue;
+				cursor: pointer;
+			  }
+			}
+		  }
+		}
+
+		.search-box {
+		  background: #fafafa;
+		  padding: 10px 13px;
+		  
+		  .input-wrapper {
+			background: #fff;
+			border-radius: 40px;
+			
+			i {
+			  color: grey;
+			  margin-left: 7px; 
+			  vertical-align: middle;
+			}
+		  }
+		}
+
+		input {
+		  border: none;
+		  border-radius: 30px;
+		  width: 80%;
+
+		  &::placeholder {
+			color: #e3e3e3;
+			font-weight: 300;
+			margin-left: 20px;
+		  }
+
+		  &:focus {
+			outline: none;
+		  }
+		}
+
+		.friend-drawer {
+		  padding: 10px 15px;
+		  display: flex;
+		  vertical-align: baseline;
+		  background: #fff;
+		  transition: .3s ease;
+		  
+		  &--grey {
+			background: #eee;
+		  }
+		  
+		  .text {
+			margin-left: 12px;
+			width: 70%;
+			
+			h6 {
+			  margin-top: 6px;
+			  margin-bottom: 0;
+			}
+			
+			p {
+			  margin: 0;
+			}
+		  }
+		  
+		  .time {
+			color: grey;
+		  }
+		  
+		  &--onhover:hover {
+			background: $blue;
+			cursor: pointer;
+			
+			p,
+			h6,
+			.time {
+			  color: #fff !important;
+			}
+		  }
+		}
+
+		hr {
+		  margin: 5px auto;
+		  width: 60%;
+		}
+
+		.chat-bubble {
+		  padding: 10px 14px;
+		  background: #eee;
+		  margin: 10px 30px;
+		  width: auto;
+		  border-radius: 9px;
+		  position: relative;
+		  animation: fadeIn 1s ease-in;
+		  
+		  &:after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			width: 0;
+			height: 0;
+			border: 20px solid transparent;
+			border-bottom: 0;
+			margin-top: -10px;
+		  }
+		  
+		  &--left {
+			 &:after {
+			  left: 0;
+			  border-right-color: #eee;
+				border-left: 0;
+			  margin-left: -20px;
+			}
+		  }
+		  
+		  &--right {
+			&:after {
+			  right: 0;
+			  border-left-color: $blue;
+				border-right: 0;
+			  margin-right: -20px;
+			}
+		  }
+		}
+
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+
+
+		.offset-md-9 {
+		  .chat-bubble {
+			background: $blue;
+			color: #fff;
+		  }
+		}
+
+		.chat-box-tray {
+		  background: #eee;
+		  display: flex;
+		  align-items: baseline;
+		  padding: 10px 15px;
+		  align-items: center;
+		  margin-top: 19px;
+		  bottom: 0;
+		  
+		  input {
+			margin: 0 10px;
+			padding: 6px 2px;
+		  }
+		  
+		  i {
+			color: grey;
+			font-size: 30px;
+			vertical-align: middle;
+			
+			&:last-of-type {
+			  margin-left: 25px;
+			}
+		  }
+		}
+		
+		#contentwrapper {
+			float: left;
+			width: 100%;
+		}
+		
+		#contentcolumn {
+			margin: 0 100px 0 100px;
+		}
+		
+		.innertext {
+			margin: 20px;
+			font-family: Arial; 
+			color: #5E5E5E;
+		}
+		
+		/* ##### Navigation Bar ##### */
+		
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+		}
+		
+		li {
+			float: left;
+			border-right:1px solid #bbb;
+		}
+		
+		li:last-child {
+			border-right: none;
+		}
+		
+		li a {
+			display: block;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		
+		li a:hover:not(.active) {
+			background-color: 	#808080;
+		}
+		
+		.active {
+			background-color: #0099ff;
+		}	
+		
+		/* ###### Responsive layout CSS ###### */
+		
+		@media (max-width: 840px){ /* Drop Right Column Down */
+			
+		#contentcolumn {
+				margin-right: 0; /*Set margin to LeftColumnWidth*/
+			}
+		
+		}
+		
+		@media (max-width: 600px){ /* Drop Left Column Down */
+			
+			#contentcolumn {
+				margin-left: 0;
+			}
+		
+		}
+		
+
+</style>
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+	
+		<ul style="display: inline;">
+		  <li><a id="home" href="/home">Home</a></li>
+		  <li class="active"><a id="login" href="/loginpage">{item[0]}/{username}</a></li>
+		  <li><a id="faq" href="#faq">FAQ</a></li>
+		  <li><a id="contact" href="#contact">Contact</a></li>		  
+		</ul>
+	
+	</div>
+	
+	<div id="contentwrapper">
+	
+		<div id="contentcolumn">
+			<div class="container">
+				<div class="col-md-8">
+
+					<div class="settings-tray">
+						<div class="friend-drawer no-gutters friend-drawer--grey">
+							<div>
+								<h6>Dr. Patel, Ananda</h6> 
+							</div>
+						</div>
+					</div>
+
+					<div class="chat-panel">
+						<div class="row no-gutters">
+							<div class="col-md-3">
+							<div class="chat-bubble chat-bubble--left">
+								Dear Mr. Wang,
+								
+								There is no evidence to suggest that your situation should prevent you from receiving the vaccine,<br>
+								I have multiple patients who have done so safely,<br><br>
+								Please let me know if you any further questions!
+							</div>
+							</div>
+						</div>
+						<div class="row no-gutters">
+							<div class="col-md-3 offset-md-9">
+								<div class="chat-bubble chat-bubble--right">
+									Thank you so much Dr. Ananda!
+								</div>
+							</div>
+						</div>
+						<div class="row no-gutters">
+							<div class="col-md-3 offset-md-9">
+							<div class="chat-bubble chat-bubble--left">
+								You're very welcome.
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-12">
+					<div class="chat-box-tray">
+						<i class="material-icons">sentiment_very_satisfied</i>
+						<input type="text" placeholder="Type your message here...">
+						<i class="material-icons">send</i>
+					</div>
+					</div>
+				</div>
+		  	</div>
+		</div>
+	</div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<script "text/javascript">
+	$(document).on('click', 'ul li', function(){
+		$(this).addClass('active').siblings().removeClass('active')
+	})
+	
+	$( '.friend-drawer--onhover' ).on( 'click',  function() {
+		$( '.chat-bubble' ).hide('slow').show('slow');
+	});
+</script>
+</body>
+</html>

@@ -138,13 +138,13 @@
 	<div id="header">
 	
 		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
-		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		
-		  {% if username is defined %}	
-		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
-		  <li><a id="logout" href="/logout">Logout</a></li>
-		  {% endif %}  
+			<li><a id="home" href="/home">Home</a></li>
+			<li><a id="faq" href="#faq">FAQ</a></li>
+			<li><a id="contact" href="#contact">Contact</a></li>		
+			{% if username is defined %}	
+			<li><p style="color:white;"> Welcome, {{username}}</p></li>  
+			<li><a id="logout" href="/logout">Logout</a></li>
+			{% endif %}    
 		</ul>
 	
 	</div>
@@ -152,19 +152,12 @@
 	<div id="contentwrapper">
 	
 		<div id="contentcolumn">
-		
-			<div class="innertext">
-				What action would you like to take today?<br><br>
-				
-			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_selection" class="button">COVID-19 Vaccination Appointment</a><br><br>
-                <a href="/manage_taker_appointment" class="button">Manage Appointments</a><br><br>
-				<a href="/taker_chat_selection" class="button">Private Chat</a><br><br>
-                <a href="/vaccine_pass" class="button">Vaccination Pass</a><br><br>
-                <a href="/manage_taker_profile" class="button">Manage Profile</a><br><br>
-			</div>
+            <div class="innertext">
+			Who do you want to contact?<br><br>
+            {% for row in data %}
+                <a href="/general_chat_taker?doctor_id={{row[0]}}">{{row[1]}} {{row[2]}}</a> from <b>{{row[3]}} </b><br>
+            {% endfor %}
+            </div>
 		</div>
 	</div>
 
