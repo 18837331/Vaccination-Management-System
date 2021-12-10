@@ -1,180 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vaccination Management System</title>
-
-<style>
-
-		body {
-			margin:0;
-			padding:0;
-			line-height: 1.5em;
-		}
-		
-		#header {
-			background: black;
-			font-family: Arial; 
-			height: 100px;
-		}
-		
-		#buttonlayout {
-			padding: 30px;
-			font-family: Arial; 
-			height: 200px;
-			width: 100%;
-		}
-		
-		.button {
-			background-color: #4CAF50; /* Green */
-			border: none;
-			color: white;
-			padding: 15px 16px 15px 16px;
-			text-align: center;
-			text-decoration: none;
-			font-size: 16px;
-		}
-		
-		button {
-			margin-left: auto;
-			margin-right: auto;
-			width:60%;
-		}
-		
-		#contentwrapper {
-			float: left;
-			width: 100%;
-		}
-		
-		#contentcolumn {
-			margin: 0 230px 0 230px;
-		}
-		
-		.innertext {
-			margin: 20px;
-			font-family: Arial; 
-			color: #5E5E5E;
-		}
-		
-		/* ##### Navigation Bar ##### */
-		
-		ul {
-			list-style-type: none;
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vaccination Management System</title>
+   	<link rel="preconnect" href="https://fonts.googleapis.com">
+    	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+	<style>
+		body{
 			margin: 0;
 			padding: 0;
-			background-color: #000;
+			font-family: 'Open Sans', sans-serif;
+			min-height:100vh;
+			width: 100%;
+			background-position: center;
+			background-size: cover;
+			position: relative;
 		}
-		
-		li {
-			float: left;
-			border-right:1px solid #bbb;
+
+		#nav{
+			display: flex;
+			padding: 2%;
+			justify-content: space-between;
+			align-items: center;
 		}
-		
-		li:last-child {
-			border-right: none;
+
+		.nav-links{
+			flex: 1;
+			text-align: left;
+			background:black;
 		}
-		
-		li a {
-			display: block;
+
+		.nav-links ul li{
+			list-style: none;
+			display: inline-block;
+			padding: 12px;
+			position: relative;
+		}
+
+		.nav-links ul li a{
 			color: white;
+			text-decoration: none;
+			font-size: 20px;
+		}
+
+		.nav-links ul li:hover{
+			border: 1px solid rgb(139, 180, 235);
+			background: rgb(139, 180, 235);
+			transition: 1s;
+		}
+
+		.takeAction{
+			width: 80%;
+			margin: auto;
+			padding: 0;
 			text-align: center;
-			padding: 14px 16px;
+		}
+
+		h1{
+			font-size: 30px;
+			font-weight: 800;
+			text-align: center;
+			margin-top: 10%;
+			color: black;
+		}
+
+		.row{
+			margin-top: 10%;
+			display: flex;
+			justify-content: center;
+		}
+
+		.action-col{
+			flex-basis: 18%;
+			border: 3px solid rgb(27, 94, 14);
+			background: rgb(62, 177, 77);
+			border-radius: 10px;
+			margin-bottom: 5%;
+			padding: 20px 12px;
+			text-align: center;
+		}
+
+		.button{
+			color: #fff;
 			text-decoration: none;
 		}
-		
-		li a:hover:not(.active) {
-			background-color: 	#808080;
-		}
-		
-		.active {
-			background-color: #0099ff;
-		}	
-		
-		/* ###### Responsive layout CSS ###### */
-		
-		@media (max-width: 840px){ /* Drop Right Column Down */
-		
-		#leftcolumn {
-				margin-left: -100%;
-			}
-			
-		#rightcolumn {
-				float: none;
-				width: 100%;
-				margin-left: 0;
-				clear: both;
-			}
-			
-		#contentcolumn {
-				margin-right: 0; /*Set margin to LeftColumnWidth*/
-			}
-		
-		}
-		
-		@media (max-width: 600px){ /* Drop Left Column Down */
-		
-			#leftcolumn {
-				float: none;
-				width: 100%;
-				clear: both;
-				margin-left: 0;
-			}
-			
-			#contentcolumn {
-				margin-left: 0;
-			}
-		
-		}
-		
 
-</style>
+		@media(max-width: 700px){
+			.row{
+				flex-direction: column;
+			}
+		}
+	</style>
 
 </head>
 <body>
 
-<div id="container">
-
-	<div id="header">
+	<nav>
+		<div class="nav-links">
+			<ul>
+				<li class="active"><a href="/home">HOME</a></li>
+				{% if username is not defined %}
+				<li><a href="/loginpage">SIGN UP & LOG IN</a></li>
+				{% endif %}
+				<li><a href="#faq">FAQ</a></li>
+				<li><a href="#contact">CONTACT</a></li>	
+				{% if username is defined %}
+				<li><a href="">Welcome, {{username}}</a></li>
+				<li><a href="/application">TO APPLICATION</a></li>
+				<li><a href="/logout">LOGOUT</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
 	
-		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
-		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		
-		  {% if username is defined %}	
-		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
-		  <li><a id="logout" href="/logout">Logout</a></li>
-		  {% endif %}  
-		</ul>
-	
-	</div>
-	
-	<div id="contentwrapper">
-	
-		<div id="contentcolumn">
-		
-			<div class="innertext">
-				What action would you like to take today?<br><br>
-				
+	<div id="takeAction">
+		<h1>What action would you like to take today?</h1>
+		<div class="row">
+			<div class="action-col">
+				<a href="/manage_taker_appointment" class="button">Manage Appointments</a>
 			</div>
-			<!--Buttons div:-->
-			<div id="buttonlayout">
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/aptmt_selection" class="button">COVID-19 Vaccination Appointment</a><br><br>
-                <a href="/manage_taker_appointment" class="button">Manage Appointments</a><br><br>
-				<a href="/taker_chat_selection" class="button">Private Chat</a><br><br>
-                <a href="/vaccine_pass" class="button">Vaccination Pass</a><br><br>
-                <a href="/manage_taker_profile" class="button">Manage Profile</a><br><br>
+			<div class="action-col">
+				<a href="/taker_chat_selection" class="button">Private Chat</a>
+			</div>
+			<div class="action-col">
+				<a href="/vaccine_pass" class="button">Vaccination Pass</a>
+			</div>
+			<div class="action-col">
+				<a href="/manage_taker_profile" class="button">Manage Profile</a>
 			</div>
 		</div>
 	</div>
 
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
-<script "text/javascript">
-	$(document).on('click', 'ul li', function(){
-		$(this).addClass('active').siblings().removeClass('active')
-	})
-</script>
+	<script "text/javascript">
+		$(document).on('click', 'ul li', function(){
+			$(this).addClass('active').siblings().removeClass('active')
+		})
+	</script>
 </body>
 </html>
