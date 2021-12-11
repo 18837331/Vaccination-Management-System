@@ -1,4 +1,3 @@
-from contextlib import redirect_stderr
 from datetime import datetime
 from typing import DefaultDict
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
@@ -16,7 +15,7 @@ app = Flask(__name__)
 app.secret_key = "super secret key"
 IMAGES_DIR = os.path.join(os.getcwd(), "images")
 
-BACKEND_URL = "http://localhost:5001"
+BACKEND_URL = "http://"+os.getenv('BACKEND_HOST')+":5001"
 
 
 @app.route("/")
@@ -606,4 +605,4 @@ def general_chat_doctor():
         return redirect("/application")
 
 if __name__ == "__main__":
-    app.run(host="localhost",port="5000")
+    app.run(host="0.0.0.0",port="5000")

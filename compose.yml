@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  postgreSQLdb:
+    image: postgres
+    restart: always
+    ports:
+      - 5002:5432
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      BACKEND_HOST: backend
+  
+  backend:
+    build: ./backend
+    restart: always
+    environment:
+      POSTGRES_HOST: postgreSQLdb
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080

@@ -12,12 +12,9 @@ import utils.utils as utils
 app = Flask(__name__)
 app.secret_key = "super secret key"
 IMAGES_DIR = os.path.join(os.getcwd(), "images")
-
-connection = psycopg2.connect(host="localhost",
-                             user="postgres",
-                             password="1116",
-                             database="test")
-connection.autocommit = True
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
 
 SUCCESS = {"result":True}
 FAILURE = {"result":False}
@@ -779,4 +776,15 @@ def general_chat_doctor(id=-1):
         except:
             return jsonify(FAILURE)
 if __name__ == "__main__":
-    app.run(host="localhost",port="5001")
+    connected = False
+    while not connected:
+        try:
+            connection = psycopg2.connect(host=POSTGRES_HOST,
+                                    user="postgres",
+                                    password=POSTGRES_PASSWORD,
+                                    database=POSTGRES_DB)
+            connection.autocommit = True
+            connected = True
+        except:
+            pass
+    app.run(host="0.0.0.0",port="5001")
