@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vaccination Management System</title>
-
-<style>
-
-		body {
-			margin:0;
-			padding:0;
-			line-height: 1.5em;
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vaccination Management System</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+			font-family: 'Open Sans', sans-serif;
+			min-height:100vh;
+			width: 100%;
+			background-position: center;
+			background-size: cover;
+			position: relative;
 		}
-		
-		#header {
-			background: black;
-			font-family: Arial; 
-			height: 100px;
+
+		#nav{
+			display: flex;
+			padding: 2%;
+			justify-content: space-between;
+			align-items: center;
 		}
+
+		.nav-links{
+			flex: 1;
+			text-align: left;
+			background:black;
+		}
+
+		.nav-links ul li{
+			list-style: none;
+			display: inline-block;
+			padding: 12px;
+			position: relative;
+		}
+
+		.nav-links ul li a{
+			color: white;
+			text-decoration: none;
+			font-size: 20px;
+		}
+
+		.nav-links ul li:hover{
+			border: 1px solid rgb(139, 180, 235);
+			background: rgb(139, 180, 235);
+			transition: 1s;
+		}	
 		
 		#buttonlayout {
 			padding: 30px;
@@ -45,6 +77,7 @@
 		#contentwrapper {
 			float: left;
 			width: 100%;
+			margin-top: 20px;
 		}
 		
 		#contentcolumn {
@@ -57,39 +90,16 @@
 			color: #5E5E5E;
 		}
 		
-		/* ##### Navigation Bar ##### */
-		
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			background-color: #000;
-		}
-		
-		li {
-			float: left;
-			border-right:1px solid #bbb;
-		}
-		
-		li:last-child {
-			border-right: none;
-		}
-		
-		li a {
-			display: block;
-			color: white;
-			text-align: center;
-			padding: 14px 16px;
-			text-decoration: none;
-		}
-		
-		li a:hover:not(.active) {
-			background-color: 	#808080;
-		}
-		
 		.active {
 			background-color: #0099ff;
 		}	
+
+		th, td {
+			padding: 8px;
+			text-align: center;
+		}
+
+		tr:hover {background-color: rgb(204, 215, 230);}
 		
 		/* ###### Responsive layout CSS ###### */
 		
@@ -135,24 +145,29 @@
 
 <div id="container">
 
-	<div id="header">
+	<nav>
+		<div class="nav-links">
+			<ul>
+				<li class="active"><a href="/home">HOME</a></li>
+				{% if username is not defined %}
+				<li><a href="/loginpage">SIGN UP & LOG IN</a></li>
+				{% endif %}
+				<li><a href="#faq">FAQ</a></li>
+				<li><a href="#contact">CONTACT</a></li>	
+				{% if username is defined %}
+				<li><a href="">Welcome, {{username}}</a></li>
+				<li><a href="/application">TO APPLICATION</a></li>
+				<li><a href="/logout">LOGOUT</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
 	
-		<ul style="display: inline;">
-			<li><a id="home" href="/home">Home</a></li>
-			<li><a id="faq" href="#faq">FAQ</a></li>
-			<li><a id="contact" href="#contact">Contact</a></li>		
-			{% if username is defined %}	
-			<li><p style="color:white;"> Welcome, {{username}}</p></li>  
-			<li><a id="logout" href="/logout">Logout</a></li>
-			{% endif %}    
-		</ul>
-	
-	</div>
 	
 	<div id="contentwrapper">
 	
 		<div id="contentcolumn">
-            Your current work hours:<br>
+            <h3>Your current work hours:</h3>
             <form action="/manage_doctor_time_appointment" method="POST">
                 <!-- TODO: add a javascript to ensure starting time is before ending time-->
                 <label for="work_start_time">Starting from:</label>
@@ -180,7 +195,8 @@
                         >{{hour}}:00</option>
                     {% endfor %}
                 </select>
-                <br>On:<br>
+
+                <h3>On:</h3>
                 <input type="checkbox" id="work_monday" name="work_monday" 
                 {% if work_time_data[2] == 1%}
                 checked
@@ -224,12 +240,14 @@
                 >
                 <label for="work_sunday">Sunday</label>
                 <br>
+				<br>
                 <input type="submit" value="Update">
                 <input type="submit" formaction="/doctor_fill_time_slot" value="Fill timeslot till nextweek">
             </form>
 		</div>
 		<div id="contentcolumn">
-			<table>
+			<br>
+			<table border="2">
 				<tr>
 					<th>Vaccination Name</th>
 					<th>Vaccine_taker's Name</th>

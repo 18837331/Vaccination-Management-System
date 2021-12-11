@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vaccination Management System</title>
-
-<style>
-
-		body {
-			margin:0;
-			padding:0;
-			line-height: 1.5em;
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vaccination Management System</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+			font-family: 'Open Sans', sans-serif;
+			min-height:100vh;
+			width: 100%;
+			background-position: center;
+			background-size: cover;
+			position: relative;
 		}
-		
-		#header {
-			background: black;
-			font-family: Arial; 
-			height: 100px;
+
+		#nav{
+			display: flex;
+			padding: 2%;
+			justify-content: space-between;
+			align-items: center;
 		}
+
+		.nav-links{
+			flex: 1;
+			text-align: left;
+			background:black;
+		}
+
+		.nav-links ul li{
+			list-style: none;
+			display: inline-block;
+			padding: 12px;
+			position: relative;
+		}
+
+		.nav-links ul li a{
+			color: white;
+			text-decoration: none;
+			font-size: 20px;
+		}
+
+		.nav-links ul li:hover{
+			border: 1px solid rgb(139, 180, 235);
+			background: rgb(139, 180, 235);
+			transition: 1s;
+		}	
 		
 		#buttonlayout {
 			padding: 30px;
@@ -55,36 +87,6 @@
 			margin: 20px;
 			font-family: Arial; 
 			color: #5E5E5E;
-		}
-		
-		/* ##### Navigation Bar ##### */
-		
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			background-color: #000;
-		}
-		
-		li {
-			float: left;
-			border-right:1px solid #bbb;
-		}
-		
-		li:last-child {
-			border-right: none;
-		}
-		
-		li a {
-			display: block;
-			color: white;
-			text-align: center;
-			padding: 14px 16px;
-			text-decoration: none;
-		}
-		
-		li a:hover:not(.active) {
-			background-color: 	#808080;
 		}
 		
 		.active {
@@ -135,19 +137,24 @@
 
 <div id="container">
 
-	<div id="header">
+	<nav>
+		<div class="nav-links">
+			<ul>
+				<li class="active"><a href="/home">HOME</a></li>
+				{% if username is not defined %}
+				<li><a href="/loginpage">SIGN UP & LOG IN</a></li>
+				{% endif %}
+				<li><a href="#faq">FAQ</a></li>
+				<li><a href="#contact">CONTACT</a></li>	
+				{% if username is defined %}
+				<li><a href="">Welcome, {{username}}</a></li>
+				<li><a href="/application">TO APPLICATION</a></li>
+				<li><a href="/logout">LOGOUT</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
 	
-		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
-		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		
-		  {% if username is defined %}	
-		  <li><p style="color:white;"> Welcome, {{username}}</p></li>  
-		  <li><a id="logout" href="/logout">Logout</a></li>
-		  {% endif %}  
-		</ul>
-	
-	</div>
 	
 	<div id="contentwrapper">
 	
@@ -155,6 +162,7 @@
 			<form action="/aptmt_schedule" method="post">
 			<div class="innertext">
 				<b style="font-size=x-large;">You have chosen an appointment at {{provider[1]}} at {{target_date}} {{target_time}}, which physician would you like to oversee your vaccination?</b><br>
+				<br>
 				<label for="time_slot_id">Doctor's Name:</label>
                 <select name="time_slot_id" id="time_slot_id">
 					{% for row in doctor_data %}
@@ -163,8 +171,11 @@
 				</select>
 			</div>
 			
+			<br>
+			
 			<div class="innertext">
 				<b style="font-size=x-large;">Which vaccination?</b><br>
+				<br>
 				<label for="vaccine_select">Vaccination:</label>
 				<select name="vaccine_select" id="vaccine_select">
 					{% for row in vaccine_data %}
@@ -173,8 +184,11 @@
 				</select>
 			</div>
 
+			<br>
+
 			<div class="innertext">
 				<b style="font-size=x-large;">Dose Number?</b><br>
+				<br>
 				<label for="dose_num">Vaccination:</label>
 				<select name="dose_num" id="dose_num">
 					<option value="1">First Dose</option>
@@ -183,10 +197,14 @@
 				</select>
 			</div>
 
+			<br>
+
 			<div class="innertext">
 				Any notes?<br>
+				<br>
 				<input type="text" name="notes" height="4" size="80"><br><br>
 				<input type="hidden" name="medical_provider_id" value="{{provider[0]}}">
+				<br>
 				<input type="submit" value="Make Appointment">
 			</div>
 		</div>
