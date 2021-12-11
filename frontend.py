@@ -16,11 +16,6 @@ app = Flask(__name__)
 app.secret_key = "super secret key"
 IMAGES_DIR = os.path.join(os.getcwd(), "images")
 
-connection = psycopg2.connect(host="localhost",
-                             user="postgres",
-                             password="1116",
-                             database="test")
-connection.autocommit = True
 BACKEND_URL = "http://localhost:5001"
 
 
