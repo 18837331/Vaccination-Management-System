@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vaccination Management System</title>
-
-<style>
-
-		body {
-			margin:0;
-			padding:0;
-			line-height: 1.5em;
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vaccination Management System</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+			font-family: 'Open Sans', sans-serif;
+			min-height:100vh;
+			width: 100%;
+			background-position: center;
+			background-size: cover;
+			position: relative;
 		}
-		
-		#header {
-			background: black;
-			font-family: Arial; 
-			height: 100px;
+
+		#nav{
+			display: flex;
+			padding: 2%;
+			justify-content: space-between;
+			align-items: center;
 		}
+
+		.nav-links{
+			flex: 1;
+			text-align: left;
+			background:black;
+		}
+
+		.nav-links ul li{
+			list-style: none;
+			display: inline-block;
+			padding: 12px;
+			position: relative;
+		}
+
+		.nav-links ul li a{
+			color: white;
+			text-decoration: none;
+			font-size: 20px;
+		}
+
+		.nav-links ul li:hover{
+			border: 1px solid rgb(139, 180, 235);
+			background: rgb(139, 180, 235);
+			transition: 1s;
+		}	
 		
 		#contentwrapper {
 			float: left;
@@ -32,36 +64,6 @@
 			margin: 20px;
 			font-family: Arial; 
 			color: #5E5E5E;
-		}
-		
-		/* ##### Navigation Bar ##### */
-		
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			background-color: #000;
-		}
-		
-		li {
-			float: left;
-			border-right:1px solid #bbb;
-		}
-		
-		li:last-child {
-			border-right: none;
-		}
-		
-		li a {
-			display: block;
-			color: white;
-			text-align: center;
-			padding: 14px 16px;
-			text-decoration: none;
-		}
-		
-		li a:hover:not(.active) {
-			background-color: 	#808080;
 		}
 		
 		.active {
@@ -103,66 +105,64 @@
 			}
 		
 		}
-		
-
-</style>
-
+	</style>
 </head>
 <body>
+	<nav>
+		<div class="nav-links">
+			<ul>
+				<li class="active"><a href="/home">HOME</a></li>
+				{% if username is not defined %}
+				<li><a href="/loginpage">SIGN UP & LOG IN</a></li>
+				{% endif %}
+				<li><a href="#faq">FAQ</a></li>
+				<li><a href="#contact">CONTACT</a></li>	
+				{% if username is defined %}
+				<li><a href="">Welcome, {{username}}</a></li>
+				<li><a href="/application">TO APPLICATION</a></li>
+				<li><a href="/logout">LOGOUT</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
 
-<div id="container">
-
-	<div id="header">
-	
-		<ul style="display: inline;">
-		  <li><a id="home" href="/home">Home</a></li>
-		  <li class="active"><a id="login" href="/loginpage">Sign Up & Log In</a></li>
-		  <li><a id="faq" href="#faq">FAQ</a></li>
-		  <li><a id="contact" href="#contact">Contact</a></li>		  
-		</ul>
-	
-	</div>
-	
-	<div id="contentwrapper">
-	
+	<div id="contentwrapper">	
 		<div id="contentcolumn">
-		
 			<div class="innertext">
-			
 				<b>Welcome!</b> <br><br>
 				Please enter you username and password to login to the system:<br><br>
 				<form action="/loginAuth" method="post">
 					<label for="uname">Username: </label>
 					<input type="text" id="uname" name="uname"><br><br>
 					<label for="pswrd">Password: </label>
-					<input type="text" id="pswrd" name="pswrd"><br><br>
+					<input type="text" id="pswrd" name="pswrd"><br><br><br>
 					I am a:<br>&nbsp;
 					<input type="radio" id="patient" name="usertype" value="vaccine_taker" checked>
-					<label for="patient">&nbsp;&nbsp;Patient</label><br>
-  					<input type="radio" id="healthprovider" name="usertype" value="medical_provider">
-  					<label for="healthprovider">Healthcare Provider</label><br>
-                    <input type="radio" id="physician" name="usertype" value="doctor">
-                    <label for="physician">Doctor</label><br>
-					<input type="submit" value="Login"><br><br>
+					<label for="patient">&nbsp;&nbsp;Patient</label>
+		  			<input type="radio" id="healthprovider" name="usertype" value="medical_provider">
+		  			<label for="healthprovider">Healthcare Provider</label>
+					<input type="radio" id="doctor" name="usertype" value="doctor">
+  					<label for="doctor">Doctor</label><br><br>
+					<input type="submit" value="Login"><br>
 				</form>
-				Don't have an account with us yet?&nbsp;&nbsp
+				<br>
+				Don't have an account with us yet?&nbsp;&nbsp; 
 				<a href="/register">Click here to register</a>
 			</div>	
 		</div>
 	</div>
 
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
-<script> "text/javascript">
-	$(document).on('click', 'ul li', function(){
-		$(this).addClass('active').siblings().removeClass('active')
-	})
-function goToLoginPage() {
-	document.getElementById("home").classlist.remove('active');
-	document.getElementById("login").classlist.add('active');
-	//obj.class = active;
-}
-</script>
+	<script> "text/javascript">
+		$(document).on('click', 'ul li', function(){
+			$(this).addClass('active').siblings().removeClass('active')
+		})
+	function goToLoginPage() {
+		document.getElementById("home").classlist.remove('active');
+		document.getElementById("login").classlist.add('active');
+		//obj.class = active;
+	}
+	</script>
 </body>
 </html>
