@@ -218,16 +218,15 @@ def manage_doctor_profile(id=-1):
         query = "SELECT first_name, mid_name, last_name, birthdate, phone_num FROM doctor where id=%s;"
         cursor.execute(query, (id,))
         data = cursor.fetchone()
-        if data:
-            formated_birthdate = data[3][:4] + "-" + data[3][4:6] + "-" + data[3][6:]
-            data = (data[0], data[1], data[2], formated_birthdate, data[4])
         mp_query = """select m.name, m.address1, m.address2, m.city, m.state, m.country, m.zipcode from 
         doctor d join medical_provider m on d.medical_provider_id = m.id 
         where d.id=%s;"""
         cursor.execute(mp_query, (id,))
         mp_data = cursor.fetchone()
         cursor.close()
-        if mp_data:
+        if data:
+            formated_birthdate = data[3][:4] + "-" + data[3][4:6] + "-" + data[3][6:]
+            data = (data[0], data[1], data[2], formated_birthdate, data[4])
             result = SUCCESS.copy()
             result.update({"mp_data":mp_data,"data":data})
             return jsonify(result)
