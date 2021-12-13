@@ -546,7 +546,8 @@ def general_chat_taker():
         result = requests.get(BACKEND_URL+"/general_chat_taker/%d"%id, params=request.args).json()
         if result["result"]:
             messages = result["messages"]
-            return render_template("general_chat_taker.html", username=username, id=id, messages=messages)
+            doctor_id = result["doctor_id"]
+            return render_template("general_chat_taker.html", username=username, id=id, messages=messages, doctor_id=doctor_id)
         return redirect("/application")
     elif request.method == "POST":
         if request.form:
@@ -592,7 +593,8 @@ def general_chat_doctor():
         result = requests.get(BACKEND_URL+"/general_chat_doctor/%d"%id, params=params).json()
         if result["result"]:
             messages = result["messages"]
-            return render_template("general_chat_doctor.html", username=username, id=id, messages=messages)
+            vaccine_taker_id = result["vaccine_taker_id"]
+            return render_template("general_chat_doctor.html", username=username, id=id, messages=messages, vaccine_taker_id=vaccine_taker_id)
         return redirect("/application")
         
     elif request.method == "POST":

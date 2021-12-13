@@ -366,7 +366,7 @@
 						<form action="/general_chat_doctor" method="post" id="chat_msg_form">
 						<i class="material-icons">sentiment_very_satisfied</i>
 						<input type="text" placeholder="Type your message here..." size="300" name="content" required>
-						<input type="hidden" name="vaccine_taker_id" value="{{messages[0][0][6]}}">
+						<input type="hidden" name="vaccine_taker_id" value="{{vaccine_taker_id}}">
 						<i class="material-icons" onclick="document.getElementById('chat_msg_form').submit();">send</i>
 						</form>
 					</div>

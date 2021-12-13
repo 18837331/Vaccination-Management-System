@@ -422,7 +422,7 @@ def aptmt_schedule(id=-1):
             select vaccination.id, vaccine_name from vaccination join(
                 select * from availability where available_num > 0
             ) tmp on vaccination.id = tmp.vaccination_id
-            where id = %s;
+            where tmp.medical_provider_id = %s;
             """
             cursor.execute(vaccine_query, (medical_provider_id,))
             vaccine_data = cursor.fetchall()
@@ -696,10 +696,12 @@ def general_chat_taker(id=-1):
             messages = list(cursor.fetchall())
             messages = utils.process_messages(messages)
             result = SUCCESS.copy()
-            result.update({"messages":messages})
+            result.update({"messages":messages, "doctor_id":doctor_id})
             return jsonify(result)
         except:
-            return jsonify(FAILURE)
+            result = FAILURE.copy()
+            result.update({"doctor_id":doctor_id})
+            return jsonify(result)
     elif request.method == "POST":
         if request.form:
             try:
@@ -753,11 +755,12 @@ def general_chat_doctor(id=-1):
             messages = list(cursor.fetchall())
             messages = utils.process_messages(messages)
             result = SUCCESS.copy()
-            result.update({"messages":messages})
-            print("Success")
+            result.update({"messages":messages, "vaccine_taker_id":vaccine_taker_id})
             return jsonify(result)
         except:
-            return jsonify(FAILURE)
+            result = FAILURE.copy()
+            result.update({"vaccine_taker_id":vaccine_taker_id})
+            return jsonify(result)
     elif request.method == "POST":
         try:
             if request.form:
