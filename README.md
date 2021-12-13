@@ -1,36 +1,34 @@
-# SETemplate
+# To Run with Docker (Recommended)
 
-A template repo for Software Engineering projects at NYU Tandon.
+In the directory where README.md is located, run:
 
-In order to build production, in the top level directory, run:
+`docker-compose -f ./compose.yml up`
 
-`make prod`
-
+Then go to your favourite browser and access
+`http://localhost:5000`
 
 ## Requirements
 
-The requirements for a design project include:
+Docker
 
-1. Everything under source code control
-1. Documentation integrated with code.
-1. Project build automated.
-1. Automated testing in place.
-1. Automated code checking in place.
-1. Test code coverage measured.
-1. Automated deployment to production
+# To Run without Docker
+## Requires:
+PostgreSQL
+Python 3.8
+MarkupSafe==1.1.1
+Jinja2==2.10
+Flask==1.0.2
+Werkzeug==0.14.1
+itsdangerous==1.1.0
+click==7.0
+psycopg2==2.8.5
+requests==2.24.0
 
-## Design
+## Steps to run withou Docker
+Set environment variable:
+$POSTGRES_HOST
+$POSTGRES_PASSWORD 
+$POSTGRES_DB
+$BACKEND_URL = "http://localhost:5001"
 
-The following is a standard toolkit for this course. You *may* use other tools,
-but our ability to help you master them will not be as high as with the
-standard tools.
-
-1. Use `git`
-1. Use `pydoc`
-1. Use `make`
-1. Use `unittest`
-1. Use `flake8`
-1. Use `coverage`
-1. Use `Travis`
-
-
+Initialize PostgreSQL with init.sql
