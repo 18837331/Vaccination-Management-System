@@ -24,10 +24,17 @@ click==7.0
 psycopg2==2.8.5  
 requests==2.24.0  
 
-## Steps to run withou Docker  
+## Steps
 Set environment variable:  
 $POSTGRES_HOST  
 $POSTGRES_PASSWORD   
 $POSTGRES_DB  
 $BACKEND_URL = "http://localhost:5001"  
+  
 Initialize PostgreSQL with init.sql  
+
+Go to .../Vaccination-Management-System/frontend  
+`python ./frontend.py`
+
+Go to .../Vaccination-Management-System/backend 
+`python ./backend.py`
