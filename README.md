@@ -1,5 +1,5 @@
 # To Run with Docker (Recommended)  
-
+## Steps:  
 In the directory where README.md is located, run:  
 
 `docker-compose -f ./compose.yml up`  
